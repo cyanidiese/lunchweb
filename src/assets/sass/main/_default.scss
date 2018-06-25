@@ -1,0 +1,9 @@
+/*================default=================*/
+
+@import '_variables.scss';
+
+@import 'layout/_reset.scss';
+
+.grayscale-content{
+  filter: grayscale(1);
+}

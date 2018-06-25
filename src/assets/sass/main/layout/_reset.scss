@@ -1,0 +1,103 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video, button {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, menu, nav, section {
+  display: block;
+}
+ol, ul {
+  list-style: none;
+}
+blockquote, q {
+  quotes: none;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+}
+
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color: $light-grey;
+  font-size: 1.6rem;
+}
+::-moz-placeholder { /* Firefox 19+ */
+  color: $light-grey;
+  font-size: 1.6rem;
+}
+:-ms-input-placeholder { /* IE 10+ */
+  color: $light-grey;
+  font-size: 1.6rem;
+}
+:-moz-placeholder { /* Firefox 18- */
+  color: $light-grey;
+  font-size: 1.6rem;
+}
+
+* {
+  word-break: break-word;
+  box-sizing: border-box;
+  outline: none;
+}
+
+html {
+  font-size: 62.5%;
+  height: 100%;
+}
+
+body {
+  font-family: $main-font;
+  font-size: 14px;
+  color: $dark-grey;
+  font-weight: 400;
+  overflow-x: hidden;
+  position: relative;
+  height: 100%;
+
+  &.body-with-modals {
+    overflow-y: hidden;
+  }
+}
+
+img {
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+}
+
+address {
+  font-style: normal;
+}
+
+dt {
+  font-weight: normal;
+}
