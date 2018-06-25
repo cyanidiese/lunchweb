@@ -27,9 +27,7 @@
         "./assets/sass/main/_default.scss"
       ],
       "scripts": [
-        "../node_modules/systemjs/dist/system-production.js",
-        "./assets/js/socket.io.js",
-        "./assets/js/yii-node-socket.js"
+        "../node_modules/systemjs/dist/system-production.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {
