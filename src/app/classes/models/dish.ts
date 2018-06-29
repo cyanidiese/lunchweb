@@ -11,7 +11,7 @@ export class Dish {
   weight: number;
   calories: number;
   price: number;
-  images: Image[]
+  images: Image[];
 
   constructor(values: Object = {}) {
     Object.assign(this, values);

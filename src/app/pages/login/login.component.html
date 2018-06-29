@@ -1,3 +1,38 @@
-<p>
-  login works!
-</p>
+<div class="login-body">
+<div class="login-box">
+    <form class="login-container" [formGroup]="loginForm" (submit)="onLogIn($event)">
+        <mat-progress-bar
+                *ngIf="isCurrentlyLoggingIn"
+                class="example-margin"
+                [color]="'primary'"
+                [mode]="'indeterminate'">
+        </mat-progress-bar>
+
+        <h3 class="error" *ngIf="loginErrorMessage">{{loginErrorMessage}}</h3>
+
+        <mat-form-field>
+            <input matInput placeholder="Enter your email" formControlName="email" required>
+            <mat-error *ngIf="getErrorMessage('email')">{{getErrorMessage('email')}}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput placeholder="Enter your password" formControlName="password"
+                   [type]="!displayPasswordAsIs ? 'password' : 'text'">
+            <mat-icon matSuffix (click)="displayPasswordAsIs = !displayPasswordAsIs">
+                {{!displayPasswordAsIs ? 'visibility' : 'visibility_off'}}
+            </mat-icon>
+        </mat-form-field>
+
+        <div class="button-row">
+            <button mat-raised-button color="primary"
+                    [disabled]="(!loginForm.valid || isCurrentlyLoggingIn)"
+                    (click)="onLogIn($event)"
+            >Log In
+            </button>
+            <button mat-raised-button color="primary" (click)="socialSignIn('google')">
+                Sign in with Google
+            </button>
+        </div>
+    </form>
+</div>
+</div>

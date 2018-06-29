@@ -1,8 +1,12 @@
 import {Injectable} from '@angular/core';
 import {Http, Headers, Request, Response, RequestMethod} from '@angular/http';
 import {AuthStateService} from './auth-state.service';
+// import 'rxjs/Rx';
+// import 'rxjs/add/operator/toPromise';
+// import 'rxjs/add/operator/map'
+// import {Observable} from 'rxjs-compat/observable';
 import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/toPromise';
+
 import { environment } from '../../environments/environment';
 
 @Injectable()
@@ -84,6 +88,8 @@ export class ApiService {
             if (!(body === undefined || verb === 'Get')) {
                 requestData['body'] = body;
             }
+
+            console.log(requestData);
 
             let request = new Request(requestData);
 

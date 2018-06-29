@@ -10,7 +10,13 @@ export class DishesService {
 
     getDishes(providerId?: number, categoryId?: number) {
 
-        let params = {provider_id: providerId, category_id: categoryId};
+        let params = {};
+        if(providerId){
+            params["provider_id"] = providerId;
+        }
+        if(categoryId){
+            params["category_id"] = categoryId;
+        }
 
         return this.api.get('/dishes/index', params);
     }

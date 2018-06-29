@@ -2,20 +2,26 @@ import {Injectable, EventEmitter, Inject} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Title, Meta} from '@angular/platform-browser';
 import {isPlatformBrowser, DOCUMENT} from '@angular/common';
-import {FormGroup} from "@angular/forms";
+import {FormGroup} from '@angular/forms';
 
 
-import {ApiService} from "./api.service";
-import {GoogleAnalyticsService} from "./google-analytics.service";
-import {LocStorageService} from "./loc-storage.service";
-import {AuthStateService} from './auth-state.service';
 import {User} from '../classes/models/user';
 import {Office} from '../classes/models/office';
 import {Category} from '../classes/models/category';
+import {Dish} from '../classes/models/dish';
+
+import {AuthStateService} from './auth-state.service';
+import {GoogleAnalyticsService} from './google-analytics.service';
+import {LocStorageService} from './loc-storage.service';
+
+import {ApiService} from './api.service';
 import {MasterService} from './api/master.service';
 import {OfficesService} from './api/offices.service';
 import {ProvidersService} from './api/providers.service';
 import {CategoriesService} from './api/categories.service';
+import {DishesService} from './api/dishes.service';
+
+import {ModalsService} from '../modules/reusable/modals/modals.service';
 
 @Injectable()
 export class StateService {
@@ -25,6 +31,7 @@ export class StateService {
     private offices: Office[] = [];
     private providers: User[] = [];
     private categories: Category[] = [];
+    private dishes: Dish[] = [];
 
     private pageRoleType: string;
     private pageType: string;
@@ -39,14 +46,17 @@ export class StateService {
 
     public loggedInUpdated$: EventEmitter<boolean> = new EventEmitter();
     public pageTypeUpdated$: EventEmitter<string> = new EventEmitter();
+    public pageRoleTypeUpdated$: EventEmitter<string> = new EventEmitter();
     public userUpdated$: EventEmitter<User> = new EventEmitter();
     public officesUpdated$: EventEmitter<Office[]> = new EventEmitter();
     public providersUpdated$: EventEmitter<User[]> = new EventEmitter();
     public categoriesUpdated$: EventEmitter<Category[]> = new EventEmitter();
+    public dishesUpdated$: EventEmitter<Dish[]> = new EventEmitter();
 
     constructor(private route: ActivatedRoute,
                 private router: Router,
                 private localStorage: LocStorageService,
+                private modalsService: ModalsService,
                 private titleService: Title,
                 private metaService: Meta,
                 private googleAnalyticsService: GoogleAnalyticsService,
@@ -56,6 +66,7 @@ export class StateService {
                 private officesApi: OfficesService,
                 private providersApi: ProvidersService,
                 private categoriesApi: CategoriesService,
+                private dishesApi: DishesService,
                 @Inject(DOCUMENT) private document) {
 
         this.googleAnalyticsService.setIsBrowserSide(this.isBrowserSide());
@@ -70,22 +81,21 @@ export class StateService {
     }
 
     public updateLoggedIn(loggedIn: boolean): void {
-        console.log("======LOGGED IN===");
-        console.log(loggedIn);
-        if (this.loggedIn != loggedIn) {
 
-            this.loggedIn = loggedIn;
-            this.loggedInUpdated$.emit(this.loggedIn);
+        if (!loggedIn) {
+            this.user = null;
 
-            if(this.loggedIn){
-                this.getUserProfile();
-            }
-            else{
-                this.updateUserProfile(null);
-                this.pageRoleType = "login"
-                this.redirectToRoute('/')
-            }
+            this.detectCorrectRoute();
         }
+        this.updateUserProfile(this.user);
+        if (!this.loggedIn && loggedIn) {
+            this.getUserProfile();
+            this.getOffices();
+            this.getCategories();
+            this.getProviders();
+        }
+        this.loggedIn = loggedIn;
+        this.loggedInUpdated$.emit(this.loggedIn);
     }
 
     //==============================================================
@@ -100,33 +110,169 @@ export class StateService {
         });
     }
 
+    getCurrentUserProfile(): User {
+        return this.user;
+    }
+
     updateUserProfile(user: User): void {
-        console.log("======Profile===");
-        console.log(user);
-        console.log(user.role.name);
-        console.log(this.pageRoleType);
+
         this.user = user;
         this.userUpdated$.emit(this.user);
-        if(user && user.role && user.role.name != this.pageRoleType){
-            this.pageRoleType = user.role.name;
-
-            console.log('/'+user.role.name);
-            this.redirectToRoute(['/'+user.role.name])
-        }
+        this.detectCorrectRoute();
     }
 
     //==============================================================
 
-    isBrowserSide(){
+    getOffices() {
+        this.officesApi.getOffices().then((response: Office[]) => {
+
+            this.updateOffices(response);
+
+        }).catch(error => {
+            this.checkErrorType(error);
+        });
+    }
+
+    getCurrentOffices(): Office[] {
+        return this.offices;
+    }
+
+    updateOffices(offices: Office[]): void {
+
+        this.offices = offices;
+        this.officesUpdated$.emit(this.offices);
+    }
+
+    //==============================================================
+
+    getCategories() {
+        this.categoriesApi.getCategories().then((response: Category[]) => {
+
+            this.updateCategories(response);
+
+        }).catch(error => {
+            this.checkErrorType(error);
+        });
+    }
+
+    getCurrentCategories(): Category[] {
+        return this.categories;
+    }
+
+    updateCategories(categories: Category[]): void {
+
+        this.categories = categories;
+        this.categoriesUpdated$.emit(this.categories);
+    }
+
+    //==============================================================
+
+    getProviders() {
+        this.providersApi.getProviders().then((response: User[]) => {
+
+            this.updateProviders(response);
+
+        }).catch(error => {
+            this.checkErrorType(error);
+        });
+    }
+
+    getCurrentProviders(): User[] {
+        return this.providers;
+    }
+
+    updateProviders(providers: User[]): void {
+
+        this.providers = providers;
+        this.providersUpdated$.emit(this.providers);
+    }
+
+    //==============================================================
+
+    getDishesByProvider(providerId) {
+
+        this.dishesApi.getDishes(providerId).then((response: Dish[]) => {
+
+            this.updateDishes(response);
+
+        }).catch(error => {
+
+            this.checkErrorType(error);
+        });
+    }
+
+    getCurrentDishes(): Dish[] {
+        return this.dishes;
+    }
+
+    updateDishes(dishes: Dish[]): void {
+
+        this.dishes = dishes;
+        this.dishesUpdated$.emit(this.dishes);
+    }
+
+    //==============================================================
+
+    logOut() {
+
+        const confirmation = this.modalsService.confirmationDialog('Log Out', 'Are you really sure want to log out?', 'Log Out');
+
+        confirmation.afterClosed().subscribe(
+            confirmed => {
+                if (confirmed) {
+                    this.auth.logOut();
+                }
+            }
+        );
+    }
+
+    detectCorrectRoute() {
+
+        if (!this.user) {
+
+            this.cleanUpData();
+
+            this.pageRoleType = 'login';
+
+            this.redirectToRoute(['/'])
+        }
+        else {
+
+            if (this.user && this.user.role && this.user.role.name != this.pageRoleType) {
+                this.pageRoleType = this.user.role.name;
+
+                this.redirectToRoute(['/' + this.user.role.name])
+            }
+        }
+    }
+
+    cleanUpData() {
+
+        this.offices = [];
+        this.providers = [];
+        this.categories = [];
+        this.dishes = [];
+    }
+
+    //==============================================================
+
+    isBrowserSide() {
         return this.auth.isBrowserSide();
     }
 
-    getRouteParamsEnv(){
+    getRouteParamsEnv() {
         return this.routeParamsEnv;
     }
 
-    scrollBodyTo(position){
+    scrollBodyTo(position) {
         this.document.documentElement.scrollTop = this.document.body.scrollTop = position;
+    }
+
+    public updatePageRoleType(pageRoleType: string): void {
+
+        this.pageRoleType = pageRoleType;
+        this.pageRoleTypeUpdated$.emit(pageRoleType);
+        this.detectCorrectRoute();
     }
 
     public updatePageType(pageType: string): void {
@@ -134,7 +280,7 @@ export class StateService {
         this.pageType = pageType;
         this.pageTypeUpdated$.emit(pageType);
 
-        if(this.isBrowserSide()) {
+        if (this.isBrowserSide()) {
             setTimeout(() => {
                 this.scrollBodyTo(0);
             }, 500);
@@ -143,29 +289,12 @@ export class StateService {
         this.setCorrectDocumentTitle();
     }
 
-    public updateCategories(categories: Category[]): void {
-        this.categories = categories;
-        this.categoriesUpdated$.emit(this.categories);
-    }
-
     public getLoggedIn(): boolean {
         return this.loggedIn;
     }
 
     public getCurrentPageType(): string {
         return this.pageType;
-    }
-
-    public getCurrentUser(): User {
-        return this.user;
-    }
-
-    public getCurrentCategories(): Category[] {
-        return this.categories;
-    }
-
-    public getCurrentOffices(): Office[] {
-        return this.offices;
     }
 
     //==============================================================
@@ -184,20 +313,20 @@ export class StateService {
     //==================   DOCUMENT TITLE  =========================
     //==============================================================
 
-    public getBaseUrl(withoutProtocol?: boolean){
+    public getBaseUrl(withoutProtocol?: boolean) {
 
         return (withoutProtocol ? '' : this.document.location.protocol + '//') + this.document.location.hostname + (this.document.location.port ? ':' + this.document.location.port : '');
 
     }
 
-    public makeUrl(base, queryParams?){
+    public makeUrl(base, queryParams?) {
 
-        let url = base ;
+        let url = base;
 
-        if(queryParams) {
+        if (queryParams) {
             url = url + '?' + Object.keys(queryParams).map(function (key) {
-                return [key, queryParams[key]].map(encodeURIComponent).join("=");
-            }).join("&");
+                return [key, queryParams[key]].map(encodeURIComponent).join('=');
+            }).join('&');
         }
 
         return url;
@@ -219,11 +348,11 @@ export class StateService {
         let ogDescription = 'Silent Lunch Made Easy';
 
         this.titleService.setTitle(newTitle);
-        this.metaService.updateTag({ property: 'og:title', content: newTitle });
-        this.metaService.updateTag({ property: 'og:url', content: ogUrl });
-        this.metaService.updateTag({ property: 'og:image', content: ogImage });
-        this.metaService.updateTag({ property: 'og:description', content: ogDescription });
-        this.metaService.updateTag({ property: 'description', content: ogDescription });
+        this.metaService.updateTag({property: 'og:title', content: newTitle});
+        this.metaService.updateTag({property: 'og:url', content: ogUrl});
+        this.metaService.updateTag({property: 'og:image', content: ogImage});
+        this.metaService.updateTag({property: 'og:description', content: ogDescription});
+        this.metaService.updateTag({property: 'description', content: ogDescription});
 
         this.googleAnalyticsService.setTitle(newTitle);
     }
@@ -233,7 +362,7 @@ export class StateService {
     //=======================   OFFSET  ============================
     //==============================================================
 
-    getOffsetOfElement( el ) {
+    getOffsetOfElement(el) {
         let _x = 0;
         let _y = 0;
         while (el && !isNaN(el.offsetLeft) && !isNaN(el.offsetTop)) {
@@ -244,34 +373,34 @@ export class StateService {
         return {top: _y, left: _x};
     }
 
-    setAuctionScreenOffset(auctionId, pageOffset){
+    setAuctionScreenOffset(auctionId, pageOffset) {
         this.screenOffsets[auctionId] = pageOffset;
     }
 
-    getAuctionScreenOffset(auctionId){
+    getAuctionScreenOffset(auctionId) {
 
         let offsetValue = this.screenOffsets[auctionId];
 
-        if(offsetValue){
-            if((offsetValue + '').indexOf('item-box') !== -1){
-                return this.getOffsetOfElement( this.document.getElementById(offsetValue) ).top;
+        if (offsetValue) {
+            if ((offsetValue + '').indexOf('item-box') !== -1) {
+                return this.getOffsetOfElement(this.document.getElementById(offsetValue)).top;
             }
-            else{
+            else {
                 return offsetValue;
             }
         }
-        else{
+        else {
             return 0;
         }
     }
 
-    clearAuctionScreenOffset(){
+    clearAuctionScreenOffset() {
         this.screenOffsets = {};
     }
 
-    scrollToElementById(elementId){
-        let offset = this.getOffsetOfElement( this.document.getElementById(elementId) ).top;
-        if(offset){
+    scrollToElementById(elementId) {
+        let offset = this.getOffsetOfElement(this.document.getElementById(elementId)).top;
+        if (offset) {
             this.scrollBodyTo(offset);
         }
     }
@@ -281,12 +410,12 @@ export class StateService {
     //==============================================================
 
 
-    emitGAEvent(eventCategory: string, eventAction: any, eventLabel: string = null, eventValue: number = null){
+    emitGAEvent(eventCategory: string, eventAction: any, eventLabel: string = null, eventValue: number = null) {
 
         this.googleAnalyticsService.emitEvent(eventCategory, eventAction, eventLabel, eventValue);
     }
 
-    setGAPageView(url : string){
+    setGAPageView(url: string) {
 
         this.googleAnalyticsService.setPageView(url);
     }
@@ -295,16 +424,12 @@ export class StateService {
     //===================  AUTH ERROR  =============================
     //==============================================================
 
-    checkErrorType(error){
+    checkErrorType(error) {
 
-        if(error.status == 401 && this.loggedIn){
+        if (error.status == 401 && this.loggedIn) {
             this.auth.logOut();
-            let redirectUrl = window.location.href;
-            redirectUrl = ((redirectUrl.indexOf('autologin') !== -1)) ? redirectUrl.replace(/[&]?id=[\d\w]{20,}/, '') : redirectUrl;
-            window.location.href = redirectUrl;
         }
     }
-
 
 
 }

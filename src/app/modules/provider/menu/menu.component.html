@@ -1,0 +1,51 @@
+
+
+
+<mat-sidenav-container class="example-container" style="min-height: 600px">
+    <mat-sidenav #sidenav [mode]="'push'">
+        <p>
+            <button mat-button (click)="sidenav.toggle()">Close</button>
+        </p>
+        <mat-list>
+            <ng-container *ngFor="let category of categories">
+                <ng-container *ngIf="(dishes | filterByField:'categoryId':category.id).length">
+                    <h3 mat-subheader>{{category.title | translationFilter:user.lang}}</h3>
+                    <mat-list-item *ngFor="let dish of dishes | filterByField:'categoryId':category.id">
+                        <h4 mat-line>
+                            <img [src]="dish.images | firstDishImage:'50x50'">
+                            <mat-slide-toggle
+                                    class="example-margin"
+                                    [checked]="dishesInMenu[dish.id]"
+                                    [disabled]="isAfterDeadline"
+                                    [labelPosition]="'before'"
+                                    (change)="toggleDishInMenu(dish.id)">
+                                {{dish.name | translationFilter:user.lang}}
+                            </mat-slide-toggle>
+                        </h4>
+                    </mat-list-item>
+                    <mat-divider></mat-divider>
+                </ng-container>
+            </ng-container>
+        </mat-list>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+        <lunch-provider-header></lunch-provider-header>
+        <p>
+            <button mat-button (click)="sidenav.toggle()">Dishes</button>
+        </p>
+
+        <p>
+            <mat-form-field>
+                <input matInput [matDatepicker]="menuDatePicker" (dateChange)="dateChange($event)"
+                       placeholder="Menu Date" disabled [value]="menuDateControl.value">
+                <mat-datepicker-toggle matSuffix [for]="menuDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #menuDatePicker disabled="false"></mat-datepicker>
+            </mat-form-field>
+        </p>
+
+        <pre>{{currentDate | json}}</pre>
+        <pre>{{dishesMenuStruct | json}}</pre>
+        <pre>{{menu | json}}</pre>
+    </mat-sidenav-content>
+</mat-sidenav-container>

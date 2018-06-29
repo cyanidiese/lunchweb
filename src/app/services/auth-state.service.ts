@@ -31,8 +31,6 @@ export class AuthStateService {
         if (!this.isBrowserSide()) {
             return false;
         }
-//TODO: remove token
-        this.localStorage.set(this.tokenName, "b6428312ed326f744849fd67ecb46b0f");
 
         let token = this.localStorage.get(this.tokenName);
 

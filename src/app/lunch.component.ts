@@ -3,7 +3,6 @@ import {NgZone} from '@angular/core';
 import {isPlatformBrowser, DOCUMENT} from '@angular/common';
 import {ActivatedRoute, Router, NavigationEnd} from "@angular/router";
 import {Subject} from "rxjs";
-import 'rxjs/add/operator/takeUntil';
 
 import {User} from "./classes/models/user";
 import {StateService} from "./services/state.service";
@@ -22,8 +21,6 @@ export class LunchComponent implements OnInit, OnDestroy {
     pageType = '';
 
     routeParamsEnv: any = {};
-
-    isDonationInApp = false;
 
     hideAllExceptMain = false;
 
@@ -58,11 +55,11 @@ export class LunchComponent implements OnInit, OnDestroy {
             }
         });
 
-        this.state.pageTypeUpdated$.takeUntil(this.ngUnsubscribe).subscribe(pageType => this.onPageTypeUpdated(pageType));
-        this.state.userUpdated$.takeUntil(this.ngUnsubscribe).subscribe(user => this.onUserUpdated(user));
+        this.state.pageTypeUpdated$.subscribe(pageType => this.onPageTypeUpdated(pageType));
+        this.state.userUpdated$.subscribe(user => this.onUserUpdated(user));
 
         this.onPageTypeUpdated(this.state.getCurrentPageType());
-        this.onUserUpdated(this.state.getCurrentUser());
+        this.onUserUpdated(this.state.getCurrentUserProfile());
         this.onRouteParamsEnvUpdated(this.state.getRouteParamsEnv());
 
 
@@ -88,15 +85,6 @@ export class LunchComponent implements OnInit, OnDestroy {
     onRouteParamsEnvUpdated(routeParamsEnv: any) {
         this.routeParamsEnv = routeParamsEnv;
 
-        let inAppClass = 'donation-in-app';
-        if(this.document) {
-            if (this.isDonationInApp) {
-                this.document.body.classList.add(inAppClass);
-            }
-            else {
-                this.document.body.classList.remove(inAppClass);
-            }
-        }
     }
 
     onUserUpdated(user: User) {
@@ -145,14 +133,14 @@ export class LunchComponent implements OnInit, OnDestroy {
             topClass += ' receipt-body';
         }
 
-        if(this.hideAllExceptMain || this.isDonationInApp){
+        if(this.hideAllExceptMain){
             topClass += ' empty-body';
         }
 
         this.topClass = topClass;
 
         let bodyClass = '';
-        if(this.hideAllExceptMain || this.isDonationInApp){
+        if(this.hideAllExceptMain){
             bodyClass += ' absolutely-hidden';
         }
         if(this.pageType == 'user'){

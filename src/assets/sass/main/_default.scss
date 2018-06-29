@@ -1,9 +1,32 @@
 /*================default=================*/
-
 @import '_variables.scss';
-
 @import 'layout/_reset.scss';
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
-.grayscale-content{
+.grayscale-content {
   filter: grayscale(1);
+}
+
+.main-menu-bar {
+  box-shadow: 0 3px 5px -1px rgba(0, 0, 0, .2), 0 6px 10px 0 rgba(0, 0, 0, .14), 0 1px 18px 0 rgba(0, 0, 0, .12);
+}
+
+@media (min-width: 721px) {
+  .second-menu-bar {
+    display: none !important;
+  }
+}
+
+@media (max-width: 720px) {
+  .second-menu-bar {
+    height: auto;
+    display: flex;
+
+    a {
+      flex: 1;
+    }
+  }
+  .wide-screen {
+    display: none !important;
+  }
 }

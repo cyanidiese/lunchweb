@@ -1,8 +1,5 @@
 import {Routes} from '@angular/router';
 import {LoginComponent} from './pages/login/login.component';
-import {MasterComponent} from './pages/master/master.component';
-import {ProviderComponent} from './pages/provider/provider.component';
-import {AdminComponent} from './pages/admin/admin.component';
 
 export const lunchRoutes: Routes = [
     {
@@ -13,45 +10,22 @@ export const lunchRoutes: Routes = [
                 component: LoginComponent
             },
             {
-                path: 'master',
-                children: [
-                    {
-                        path: '',
-                        component: MasterComponent
-                    }
-                ]
+                path: 'admin',
+                loadChildren: 'app/modules/admin/admin.module#AdminModule'
             },
             {
                 path: 'provider',
-                children: [
-                    {
-                        path: '',
-                        component: ProviderComponent
-                    }
-                ]
+                loadChildren: 'app/modules/provider/provider.module#ProviderModule'
             },
             {
-                path: 'admin',
-                children: [
-                    {
-                        path: '',
-                        component: AdminComponent
-                    }
-                ]
+                path: 'master',
+                loadChildren: 'app/modules/master/master.module#MasterModule'
             },
-            // {
-            //     path: 'organizations',
-            //     children: [
-            //         {
-            //             path: '',
-            //             component: OrganizationsListPageComponent
-            //         },
-            //         {
-            //             path: ':organizationSlug',
-            //             component: OrganizationPageComponent
-            //         }
-            //     ]
-            // }
+            {
+                path: '',
+                redirectTo: '',
+                pathMatch: 'full'
+            }
         ]
     }
 ];

@@ -4,7 +4,7 @@ import {ApiService} from '../api.service';
 import {AuthLoginRequest} from '../../classes/requests/auth-login-request';
 
 @Injectable()
-export class AuthService {
+export class AuthApiService {
 
     constructor(private api: ApiService) {
     }

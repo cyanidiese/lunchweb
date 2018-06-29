@@ -1,0 +1,19 @@
+.login-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-container > * {
+  width: 100%;
+}
+
+.button-row {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.login-body {
+
+}
+//background: url("https://ucarecdn.com/5caec5bd-3084-4a27-8bfc-8ed27ea9a70a/-/quality/lightest/") center center no-repeat;
+//background-size: cover;
