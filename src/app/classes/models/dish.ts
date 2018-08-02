@@ -11,6 +11,7 @@ export class Dish {
   weight: number;
   calories: number;
   price: number;
+  isRemoved: boolean;
   images: Image[];
 
   constructor(values: Object = {}) {

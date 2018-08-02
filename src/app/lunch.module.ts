@@ -62,7 +62,7 @@ export function getAuthServiceConfigs() {
         LoginComponent
     ],
     imports: [
-        BrowserModule.withServerTransition({appId: 'lunchapp'}),
+        // BrowserModule.withServerTransition({appId: 'lunchapp'}),
         BrowserAnimationsModule,
         FormsModule,
         HttpModule,
@@ -82,7 +82,8 @@ export function getAuthServiceConfigs() {
         AgmSnazzyInfoWindowModule,
         AgmJsMarkerClustererModule,
         ReusableModule,
-        SocialLoginModule
+        SocialLoginModule,
+        // UcWidgetModule
     ],
     providers: [
         LocStorageService,

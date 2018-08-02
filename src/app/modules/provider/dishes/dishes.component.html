@@ -1,6 +1,61 @@
 <lunch-provider-header></lunch-provider-header>
-<p>
-    dishes works!
-</p>
-<pre>{{categories | json}}</pre>
-<pre>{{dishes | json}}</pre>
+
+<mat-button-toggle-group name="isCardView" aria-label="Font Style" [(ngModel)]="isCardView">
+    <mat-button-toggle [value]="false">
+        Card View
+    </mat-button-toggle>
+    <mat-button-toggle [value]="true">
+        List View
+    </mat-button-toggle>
+</mat-button-toggle-group>
+
+<ng-container *ngFor="let dishesType of dishesTypes; let isRemoved = index">
+    <ng-container *ngIf="dishesCounts[isRemoved]['all']">
+        <h2>{{dishesType}}</h2>
+
+        <mat-button-toggle-group name="selectedCat"
+                                 aria-label="Font Style" value="all"
+                                 [(ngModel)]="selectedCat[isRemoved]">
+            <mat-button-toggle value="all">
+                <span [matBadge]="dishesCounts[isRemoved]['all']" matBadgePosition="after" matBadgeColor="primary">All dishes</span>
+            </mat-button-toggle>
+            <ng-container *ngFor="let category of categories">
+                <mat-button-toggle [value]="category.id" *ngIf="dishesCounts[isRemoved][category.id]">
+            <span [matBadge]="dishesCounts[isRemoved][category.id]" matBadgePosition="after" matBadgeColor="primary">
+                {{category.title | translationFilter:user.lang}}
+            </span>
+                </mat-button-toggle>
+            </ng-container>
+        </mat-button-toggle-group>
+
+        <ng-container
+                *ngFor="let dish of dishes | filterByField:'categoryId':selectedCat[isRemoved] | filterByField:'isRemoved':!!isRemoved">
+
+            <mat-card class="example-card">
+
+                <img *ngIf="isCardView"
+                     mat-card-image [src]="dish.images | firstDishImage:'400x300'"
+                     alt="{{dish.name | translationFilter:user.lang}}">
+
+                <mat-card-header>
+                    <div mat-card-avatar *ngIf="!isCardView"
+                         [ngStyle]="{'background' : 'url('+(dish.images | firstDishImage:'40x40')+')'}"></div>
+                    <mat-card-title>{{dish.name | translationFilter:user.lang}}</mat-card-title>
+                    <mat-card-subtitle><b>Price: </b>{{ dish.price}} <b>Weight: </b>{{ dish.weight}} <b>Calories: </b>{{
+                        dish.calories}}
+                    </mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content *ngIf="isCardView">
+                    <p>
+                        {{dish.description | translationFilter:user.lang}}
+                    </p>
+                </mat-card-content>
+                <mat-card-actions>
+                    <button mat-button (click)="dishDetailsDialog(dish)">Details</button>
+                    <button mat-button (click)="toggleRemovingDish(dish)">{{ dish.isRemoved ? "Restore" : "Remove" }}
+                    </button>
+                </mat-card-actions>
+            </mat-card>
+        </ng-container>
+    </ng-container>
+</ng-container>

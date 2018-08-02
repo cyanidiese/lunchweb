@@ -1,10 +1,7 @@
-
-
-
 <mat-sidenav-container class="example-container" style="min-height: 600px">
-    <mat-sidenav #sidenav [mode]="'push'">
+    <mat-sidenav #sidenav [(opened)]="sidenavOpened" [mode]="'push'">
         <p>
-            <button mat-button (click)="sidenav.toggle()">Close</button>
+            <button mat-button (click)="sidenavOpened = !sidenavOpened">Close</button>
         </p>
         <mat-list>
             <ng-container *ngFor="let category of categories">
@@ -16,7 +13,7 @@
                             <mat-slide-toggle
                                     class="example-margin"
                                     [checked]="dishesInMenu[dish.id]"
-                                    [disabled]="isAfterDeadline"
+                                    [disabled]="(isAfterDeadline && !user.isShop)"
                                     [labelPosition]="'before'"
                                     (change)="toggleDishInMenu(dish.id)">
                                 {{dish.name | translationFilter:user.lang}}
@@ -31,20 +28,104 @@
 
     <mat-sidenav-content>
         <lunch-provider-header></lunch-provider-header>
-        <p>
-            <button mat-button (click)="sidenav.toggle()">Dishes</button>
-        </p>
+
+        <mat-progress-bar
+                *ngIf="isDoingAnyAction()"
+                class="example-margin"
+                [color]="'primary'"
+                [mode]="'indeterminate'">
+        </mat-progress-bar>
 
         <p>
-            <mat-form-field>
-                <input matInput [matDatepicker]="menuDatePicker" (dateChange)="dateChange($event)"
-                       placeholder="Menu Date" disabled [value]="menuDateControl.value">
-                <mat-datepicker-toggle matSuffix [for]="menuDatePicker"></mat-datepicker-toggle>
-                <mat-datepicker #menuDatePicker disabled="false"></mat-datepicker>
-            </mat-form-field>
+            <button mat-button (click)="sidenavOpened = !sidenavOpened">Dishes</button>
         </p>
 
-        <pre>{{currentDate | json}}</pre>
+        <div *ngIf="!user.isShop">
+            <md2-datepicker name="menu-date"
+                            placeholder="Menu Date"
+                            [(ngModel)]="deliveryDate"
+                            [disabled]="false"
+                            [openOnFocus]="true"
+                            [type]="'date'"
+                            [touchUi]="true"
+                            [startView]="'month'"
+                            #dateControl="ngModel"
+                            [id]="'menu-date'"
+                            (change)="updateMenuDate()"
+            ></md2-datepicker>
+
+            <md2-datepicker name="menu-time"
+                            placeholder="Delivery Time"
+                            [(ngModel)]="deliveryDate"
+                            [min]="nowDate"
+                            [disabled]="isAfterDeadline"
+                            [openOnFocus]="true"
+                            [type]="'time'"
+                            [touchUi]="true"
+                            [startView]="'clock'"
+                            #dateControl="ngModel"
+                            [id]="'menu-time'"></md2-datepicker>
+
+            <md2-datepicker name="menu-deadline"
+                            placeholder="Menu Deadline"
+                            [(ngModel)]="deadlineDate"
+                            [min]="nowDate"
+                            [disabled]="isAfterDeadline"
+                            [openOnFocus]="true"
+                            [type]="'datetime'"
+                            [touchUi]="true"
+                            [startView]="'month'"
+                            #dateControl="ngModel"
+                            [id]="'menu-deadline'"></md2-datepicker>
+        </div>
+
+        <mat-list>
+            <ng-container *ngFor="let dishesMenuItem of dishesMenuStruct">
+            <mat-list-item *ngFor="let dish of dishes | filterByField:'id':dishesMenuItem.id">
+                <h4 mat-line>
+                    <img [src]="dish.images | firstDishImage:'50x50'">
+                    {{dish.name | translationFilter:user.lang}}
+                    <mat-form-field>
+                        <input
+                                matInput
+                                type="number"
+                                min="0"
+                                id="myNumber"
+                                [(ngModel)]="dishesMenuItem.count"
+                        />
+                        <mat-hint align="end">Count available</mat-hint>
+                    </mat-form-field>
+                </h4>
+            </mat-list-item>
+            </ng-container>
+        </mat-list>
+
+        <ng-container *ngIf="dishesMenuStruct.length == 0">
+            <h2 *ngIf="user.isShop">No dishes in the shop yet</h2>
+            <h2 *ngIf="!user.isShop">No menu for this date</h2>
+        </ng-container>
+
+        <div class="button-row">
+            <button mat-raised-button color="primary"
+                    [disabled]="isDoingAnyAction() || (isAfterDeadline && !user.isShop)"
+                    (click)="onSaveMenu()"
+            >Save Menu
+            </button>
+            <button mat-raised-button color="primary"
+                    *ngIf="!user.isShop"
+                    [disabled]="isDoingAnyAction() || isAfterDeadline"
+                    (click)="onCopyMenu()"
+            >Copy Menu
+            </button>
+            <button mat-raised-button color="primary"
+                    *ngIf="dishesMenuStruct.length && !user.isShop"
+                    [disabled]="isDoingAnyAction() || isAfterDeadline"
+                    (click)="onRemoveMenu()"
+            >Remove Menu
+            </button>
+        </div>
+
+        <pre>{{deliveryDate | json}}</pre>
         <pre>{{dishesMenuStruct | json}}</pre>
         <pre>{{menu | json}}</pre>
     </mat-sidenav-content>

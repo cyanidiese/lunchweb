@@ -25,7 +25,7 @@ export class DishesService {
         return this.api.post('/provider/' + providerId + '/dish/save', [], data);
     }
 
-    deleteDish(providerId: number, id: number) {
-        return this.api.delete('/provider/' + providerId + '/dish/' + providerId + '/delete');
+    deleteDish(providerId: number, dishId: number) {
+        return this.api.delete('/provider/' + providerId + '/dish/' + dishId + '/delete');
     }
 }

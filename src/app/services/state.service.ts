@@ -22,6 +22,8 @@ import {CategoriesService} from './api/categories.service';
 import {DishesService} from './api/dishes.service';
 
 import {ModalsService} from '../modules/reusable/modals/modals.service';
+import {RequestError} from '../classes/errors/request-error';
+import {AuthLoginResponse} from '../classes/responses/auth-login-response';
 
 @Injectable()
 export class StateService {
@@ -335,7 +337,7 @@ export class StateService {
     public setCorrectDocumentTitle() {
 
         let siteTitle = 'Lunch';
-        let siteAuctionTitle = 'Mobile Silent Auction';
+        let siteAuctionTitle = 'Mobile Lunch Ordering';
         let defaultTitle = siteAuctionTitle + ' | ' + siteTitle;
         let newTitle = defaultTitle;
         let auctionPageSubtitle = '';
@@ -424,10 +426,10 @@ export class StateService {
     //===================  AUTH ERROR  =============================
     //==============================================================
 
-    checkErrorType(error) {
+    checkErrorType(error : RequestError | AuthLoginResponse, showPopup?: boolean) {
 
-        if (error.status == 401 && this.loggedIn) {
-            this.auth.logOut();
+        if(showPopup){
+            const confirmation = this.modalsService.confirmationDialog(error["name"] ? error["name"] : "Error", error.message);
         }
     }
 

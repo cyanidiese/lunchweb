@@ -14,15 +14,33 @@ import {
     MatNativeDateModule,
     MatSidenavModule,
     MatSlideToggleModule,
-    MatListModule
+    MatListModule,
+    MatSnackBarModule,
+    MatSelectModule,
+    MatButtonToggleModule,
+    MatCardModule,
+    MatBadgeModule,
+    MatTabsModule
 } from '@angular/material';
 
-import { ConfirmationComponent } from './modals/confirmation/confirmation.component';
+import {Md2Module, NoConflictStyleCompatibilityMode} from 'md2';
+
+
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+
+import {ConfirmationComponent} from './modals/confirmation/confirmation.component';
+import {CopyMenuComponent} from './modals/copy-menu/copy-menu.component';
 
 import {ModalsService} from './modals/modals.service';
-import { FilterByFieldPipe } from './pipes/filter-by-field.pipe';
-import { TranslationFilterPipe } from './pipes/translation-filter.pipe';
-import { FirstDishImagePipe } from './pipes/first-dish-image.pipe';
+import {FilterByFieldPipe} from './pipes/filter-by-field.pipe';
+import {TranslationFilterPipe} from './pipes/translation-filter.pipe';
+import {FirstDishImagePipe} from './pipes/first-dish-image.pipe';
+import {FormatDateStringPipe} from './pipes/format-date-string.pipe';
+import {SortByFieldPipe} from './pipes/sort-by-field.pipe';
+import { DishModalComponent } from './modals/dish-modal/dish-modal.component';
+
+import { UcWidgetComponent } from 'ngx-uploadcare-widget';
+
 
 @NgModule({
     imports: [
@@ -39,7 +57,18 @@ import { FirstDishImagePipe } from './pipes/first-dish-image.pipe';
         MatNativeDateModule,
         MatSidenavModule,
         MatSlideToggleModule,
-        MatListModule
+        MatListModule,
+        MatSnackBarModule,
+        MatSelectModule,
+        MatCardModule,
+        MatBadgeModule,
+        MatTabsModule,
+        MatButtonToggleModule,
+        FormsModule,
+        ReactiveFormsModule,
+        Md2Module,
+        UcWidgetComponent,
+        NoConflictStyleCompatibilityMode
     ],
     exports: [
         MatButtonModule,
@@ -55,9 +84,22 @@ import { FirstDishImagePipe } from './pipes/first-dish-image.pipe';
         MatSidenavModule,
         MatSlideToggleModule,
         MatListModule,
+        MatSnackBarModule,
+        MatSelectModule,
+        MatButtonToggleModule,
+        MatCardModule,
+        MatBadgeModule,
+        MatTabsModule,
         FilterByFieldPipe,
+        SortByFieldPipe,
         TranslationFilterPipe,
-        FirstDishImagePipe
+        FirstDishImagePipe,
+        FormatDateStringPipe,
+        FormsModule,
+        ReactiveFormsModule,
+        Md2Module,
+        UcWidgetComponent,
+        NoConflictStyleCompatibilityMode
     ],
     providers: [
         ModalsService
@@ -65,11 +107,17 @@ import { FirstDishImagePipe } from './pipes/first-dish-image.pipe';
     declarations: [
         ConfirmationComponent,
         FilterByFieldPipe,
+        SortByFieldPipe,
         TranslationFilterPipe,
-        FirstDishImagePipe
+        FirstDishImagePipe,
+        FormatDateStringPipe,
+        CopyMenuComponent,
+        DishModalComponent
     ],
     entryComponents: [
-        ConfirmationComponent
+        ConfirmationComponent,
+        CopyMenuComponent,
+        DishModalComponent
     ]
 })
 export class ReusableModule {

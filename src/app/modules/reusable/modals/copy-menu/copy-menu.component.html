@@ -1,0 +1,44 @@
+<h2 mat-dialog-title>Clone menu data from</h2>
+
+<mat-dialog-content>
+
+    <mat-form-field *ngIf="menus">
+        <mat-select placeholder="Select menu date"
+                    [disabled]="isCloningMenu"
+                    [(ngModel)]="cloneDateStr"
+                    (selectionChange)="changedMenuDate()"
+        >
+            <mat-option *ngFor="let singleMenu of menus | sortByField:'date':false" [value]="singleMenu.date">
+                {{singleMenu.date | formatDateString:'DD.MM.YYYY'}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-list *ngIf="menu">
+            <mat-list-item *ngFor="let menuItem of menu.items">
+                <h4 mat-line>
+                    <img [src]="menuItem.dish.images | firstDishImage:'50x50'">
+                    {{menuItem.dish.name | translationFilter:user.lang}}
+                    <mat-form-field>
+                        <input
+                                [disabled]="true"
+                                matInput
+                                type="number"
+                                min="0"
+                                id="myNumber"
+                                [(ngModel)]="menuItem.initialCount"
+                        />
+                        <mat-hint align="end">Count available</mat-hint>
+                    </mat-form-field>
+                </h4>
+            </mat-list-item>
+    </mat-list>
+    <h3 *ngIf="!menus">You have no menu to copy items from</h3>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <button class="mat-raised-button" (click)="cancel()">Cancel</button>
+    <button class="mat-raised-button mat-primary"
+            [disabled]="!menus.length || !menu || isCloningMenu"
+            (click)="ok()">Clone</button>
+</mat-dialog-actions>

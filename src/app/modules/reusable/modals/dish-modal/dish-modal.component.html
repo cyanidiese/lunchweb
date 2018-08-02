@@ -1,0 +1,93 @@
+<h2 mat-dialog-title>Dish details</h2>
+
+<mat-dialog-content>
+    <mat-card class="example-card" *ngIf="!isEditMode">
+        <img
+             mat-card-image [src]="dish.images | firstDishImage:'400x300'"
+             alt="{{dish.name | translationFilter:user.lang}}">
+
+        <mat-card-header>
+
+            <mat-card-title>{{dish.name | translationFilter:user.lang}}</mat-card-title>
+            <mat-card-subtitle>
+                <b>Price: </b>{{ dish.price}} <b>Weight: </b>{{ dish.weight}} <b>Calories: </b>{{dish.calories}}
+            </mat-card-subtitle>
+            <mat-card-subtitle>
+                <b>Category: </b>{{ (categories | filterByField:'id':dish.categoryId:true).title | translationFilter:user.lang}}
+            </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <p>
+                {{dish.description | translationFilter:user.lang}}
+            </p>
+        </mat-card-content>
+    </mat-card>
+    <mat-card class="example-card" *ngIf="isEditMode">
+        <!--<img-->
+                <!--mat-card-image [src]="dish.images | firstDishImage:'400x300'"-->
+                <!--alt="{{dish.name | translationFilter:user.lang}}">-->
+        <ngx-uploadcare-widget
+                images-only="true"
+                public-key="7b216cf420f42da89ef0"
+                (on-upload-complete)="ucareOnUploadHandler($event)"
+                (on-change)="ucareOnChangeHandler($event)"
+                (on-progress)="ucareOnProgressHandler($event)">
+        </ngx-uploadcare-widget>
+
+        <mat-card-content>
+            <mat-tab-group>
+                <mat-tab *ngFor="let lang of ['en', 'ua', 'ru']" [label]="lang">
+                    <mat-form-field>
+                        <input matInput placeholder="{{'Name' | translationFilter:lang}}" [(ngModel)]="dish.name[lang]">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <textarea matInput placeholder="{{'Description' | translationFilter:lang}}" [(ngModel)]="dish.description[lang]"></textarea>
+                    </mat-form-field>
+                </mat-tab>
+            </mat-tab-group>
+        </mat-card-content>
+        <mat-card-header>
+            <mat-card-title>{{dish.name | translationFilter:user.lang}}</mat-card-title>
+            <mat-card-subtitle>
+                <mat-form-field>
+                    <input matInput placeholder="Price" [(ngModel)]="dish.price">
+                </mat-form-field>
+                <mat-form-field>
+                    <input matInput placeholder="Weight" [(ngModel)]="dish.weight">
+                </mat-form-field>
+                <mat-form-field>
+                    <input matInput placeholder="Calories" [(ngModel)]="dish.calories">
+                </mat-form-field>
+            </mat-card-subtitle>
+            <mat-card-subtitle>
+                <mat-form-field>
+                    <mat-select placeholder="Category" [(ngModel)]="dish.categoryId">
+                        <mat-option *ngFor="let category of categories" [value]="category.id">
+                            {{category.title | translationFilter:user.lang}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </mat-card-subtitle>
+        </mat-card-header>
+    </mat-card>
+
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <button class="mat-raised-button" (click)="cancel()"
+            [disabled]="isUpdatingDish"
+    >Close</button>
+    <button class="mat-raised-button mat-primary"
+            [disabled]="isUpdatingDish"
+            *ngIf="isEditMode"
+            (click)="isEditMode = !isEditMode">Cancel
+    </button>
+    <button class="mat-raised-button mat-primary"
+            *ngIf="!isEditMode && (dish.providerId == user.id)"
+            (click)="isEditMode = !isEditMode">Edit
+    </button>
+    <button class="mat-raised-button mat-primary"
+            *ngIf="isEditMode"
+            (click)="saveUpdate()">Save
+    </button>
+</mat-dialog-actions>

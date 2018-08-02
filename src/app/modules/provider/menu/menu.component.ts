@@ -1,17 +1,22 @@
-import { Component, OnInit } from '@angular/core';
-import {FormControl} from '@angular/forms';
+import {Component, OnInit} from '@angular/core';
+import {MatSnackBar} from '@angular/material';
+
+import * as moment from 'moment-timezone';
 
 import {Category} from '../../../classes/models/category';
 import {User} from '../../../classes/models/user';
-import {StateService} from '../../../services/state.service';
 import {Office} from '../../../classes/models/office';
 import {Menu} from '../../../classes/models/menu';
 import {Dish} from '../../../classes/models/dish';
 
-import {MenusService} from '../../../services/api/menus.service';
-
-import * as moment from 'moment-timezone';
 import {ObjectCounter} from '../../../classes/requests/object-counter';
+import {MenuUpdateRequest} from '../../../classes/requests/menu-update-request';
+
+import {RequestError} from '../../../classes/errors/request-error';
+
+import {StateService} from '../../../services/state.service';
+import {MenusService} from '../../../services/api/menus.service';
+import {ModalsService} from '../../reusable/modals/modals.service';
 
 @Component({
   selector: 'lunch-provider-menu',
@@ -19,7 +24,6 @@ import {ObjectCounter} from '../../../classes/requests/object-counter';
   styleUrls: ['./menu.component.scss']
 })
 export class MenuComponent implements OnInit {
-
 
     user: User = null;
     menu: Menu = null;
@@ -29,15 +33,23 @@ export class MenuComponent implements OnInit {
     dishes: Dish[] = [];
 
     currentDate: string;
+    deliveryDate: Date;
+    deadlineDate: Date;
+    nowDate: Date;
 
-    isAfterDeadline: boolean = false; //TODO: detect deadline
-    dishesInMenu: any = {}; //TODO: detect deadline
-    dishesMenuStruct: ObjectCounter[] = []; //TODO: detect deadline
+    isCurrentlySavingMenu: boolean = false;
+    isCurrentlyRemovingMenu: boolean = false;
 
-    menuDateControl: FormControl = new FormControl();
+    sidenavOpened: boolean = false;
+
+    isAfterDeadline: boolean = false;
+    dishesInMenu: any = {};
+    dishesMenuStruct: ObjectCounter[] = [];
 
     constructor(private state: StateService,
-                private menusApi: MenusService) {
+                private modalsService: ModalsService,
+                private menusApi: MenusService,
+                public snackBar: MatSnackBar) {
     }
 
     ngOnInit() {
@@ -55,10 +67,15 @@ export class MenuComponent implements OnInit {
         this.updateDishes(this.state.getCurrentDishes());
 
         this.initDate();
+        this.getMenuForCurrentDate();
     }
 
     logOut(){
         this.state.logOut();
+    }
+
+    isDoingAnyAction(){
+        return this.isCurrentlySavingMenu || this.isCurrentlyRemovingMenu;
     }
 
     updateUser(user: User){
@@ -100,27 +117,52 @@ export class MenuComponent implements OnInit {
 
             this.dishesMenuStruct = dishesMenuStruct;
             this.dishesInMenu = dishesInMenu;
+
+            console.log("deadline");
+
+            let menuDate = (this.menu.date.split("T"))[0];
+            let menuDeadline = (this.menu.deadline.replace("T", " ").replace("Z", ""));
+
+
+            this.deliveryDate = new Date(menuDate + " " + this.menu.time);
+            this.deadlineDate = new Date(menuDeadline);
+
+            this.isAfterDeadline = moment(this.deadlineDate).isBefore(moment());
+            this.nowDate = new Date();
+
+            // this.deadlineChange();
         }
         else{
             this.dishesMenuStruct = [];
             this.dishesInMenu = {};
+
+            this.isAfterDeadline = moment(this.currentDate).endOf('day').isBefore(moment());
+            this.nowDate = new Date();
+            console.log("===========");
+            console.log(this.isAfterDeadline);
+            console.log(moment().endOf('day').subtract(1, "day"));
+            // this.initDate();
         }
     }
 
-    initDate(){
-
-        this.currentDate = moment().format("YYYY-MM-DD");
-
-        this.getMenuForCurrentDate();
-
-        this.menuDateControl = new FormControl(this.currentDate);
+    formatDate(date: Date, format: string): string{
+        return moment(date).format(format);
     }
 
-    dateChange(dateValue) {
+    initDate(){
+        let defaultFormat = "YYYY-MM-DD HH:mm:ss";
+        this.nowDate = new Date();
+        this.deadlineDate = new Date(moment().format(defaultFormat));
+        this.deliveryDate = new Date(moment().add(3, 'hours').format(defaultFormat));
+        this.updateMenuDate();
+    }
 
-        let dateParts = dateValue.value.toISOString().split("T");
-        this.currentDate = dateParts[0];
-        this.getMenuForCurrentDate();
+    updateMenuDate(){
+        let currentDate = this.formatDate(this.deliveryDate, "YYYY-MM-DD");
+        if(currentDate != this.currentDate){
+            this.currentDate = currentDate;
+            this.getMenuForCurrentDate();
+        }
     }
 
     getMenuForCurrentDate() {
@@ -129,7 +171,7 @@ export class MenuComponent implements OnInit {
 
             this.updateMenu(response);
 
-        }).catch(error => {
+        }).catch((error : RequestError) => {
 
             console.log(error);
             this.updateMenu(null);
@@ -163,5 +205,98 @@ export class MenuComponent implements OnInit {
         }
     }
 
+    onSaveMenu(){
+
+        if(!this.dishesMenuStruct.length){
+            const confirmation = this.modalsService.confirmationDialog('Add Dishes', 'You need to add dises to menu first.', 'Add');
+
+            confirmation.afterClosed().subscribe(
+                confirmed => {
+                    if (confirmed) {
+                        this.sidenavOpened = true;
+                    }
+                }
+            );
+        }
+        else {
+
+            let request = new MenuUpdateRequest({
+                deliveryTime: this.formatDate(this.deliveryDate, "HH:mm:ss"),
+                deadline: this.formatDate(this.deadlineDate, "YYYY-MM-DD HH:mm:ss"),
+                dishes: this.dishesMenuStruct,
+            });
+            console.log("request!!");
+            console.log(this.user.id);
+            console.log(this.currentDate);
+            console.log(request);
+            this.menusApi.saveMenu(this.user.id, this.currentDate, request).then((response: Menu) => {
+
+                this.snackBar.open('Menu was successfully saved', '', {
+                    duration: 2000,
+                });
+
+                console.log("Saved!!");
+                console.log(response);
+                this.updateMenu(response);
+                // this.getMenuForCurrentDate();
+
+            }).catch((error: RequestError) => {
+
+                console.log("ERROR!!");
+                console.log(error);
+
+                this.state.checkErrorType(error, true);
+            });
+        }
+
+    }
+
+    onRemoveMenu(){
+
+        const confirmation = this.modalsService.confirmationDialog('Remove menu', 'Are you sure to remove this menu?', 'Remove it');
+
+        confirmation.afterClosed().subscribe(
+            confirmed => {
+                if (confirmed) {
+                    this.menusApi.deleteMenu(this.user.id, this.currentDate).then((response: Menu) => {
+
+                        this.snackBar.open('Menu was successfully removed', '', {
+                            duration: 2000,
+                        });
+                        this.updateMenu(null);
+                        // this.getMenuForCurrentDate();
+
+                    }).catch((error : RequestError) => {
+
+                        console.log("ERROR!!");
+                        console.log(error);
+
+                        this.state.checkErrorType(error, true);
+                    });
+                }
+            }
+        );
+
+    }
+
+    onCopyMenu(){
+        const confirmation = this.modalsService.cloneMenuDialog(this.user, this.currentDate);
+
+        confirmation.afterClosed().subscribe(
+            result => {
+                if(result) {
+                    if (result.message) {
+                        this.state.checkErrorType(result, true);
+                    }
+                    else {
+                        this.snackBar.open('Menu was successfully cloned', '', {
+                            duration: 2000,
+                        });
+                        this.getMenuForCurrentDate();
+                    }
+                }
+            }
+        );
+    }
 
 }
