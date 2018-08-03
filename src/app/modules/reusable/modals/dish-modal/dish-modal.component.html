@@ -2,9 +2,11 @@
 
 <mat-dialog-content>
     <mat-card class="example-card" *ngIf="!isEditMode">
-        <img
-             mat-card-image [src]="dish.images | firstDishImage:'400x300'"
-             alt="{{dish.name | translationFilter:user.lang}}">
+
+        <lunch-images-gallery
+                [images]="dish.images"
+                [editMode]="isEditMode"
+        ></lunch-images-gallery>
 
         <mat-card-header>
 
@@ -23,16 +25,13 @@
         </mat-card-content>
     </mat-card>
     <mat-card class="example-card" *ngIf="isEditMode">
-        <!--<img-->
-                <!--mat-card-image [src]="dish.images | firstDishImage:'400x300'"-->
-                <!--alt="{{dish.name | translationFilter:user.lang}}">-->
-        <ngx-uploadcare-widget
-                images-only="true"
-                public-key="7b216cf420f42da89ef0"
-                (on-upload-complete)="ucareOnUploadHandler($event)"
-                (on-change)="ucareOnChangeHandler($event)"
-                (on-progress)="ucareOnProgressHandler($event)">
-        </ngx-uploadcare-widget>
+
+        <lunch-images-gallery
+                [images]="dish.images"
+                [editMode]="isEditMode"
+                (imagesChanged)="imagesChanged($event)"
+                (imagesUploading)="imagesUploading($event)"
+        ></lunch-images-gallery>
 
         <mat-card-content>
             <mat-tab-group>
@@ -47,7 +46,15 @@
             </mat-tab-group>
         </mat-card-content>
         <mat-card-header>
-            <mat-card-title>{{dish.name | translationFilter:user.lang}}</mat-card-title>
+            <mat-card-subtitle>
+                <mat-form-field>
+                    <mat-select placeholder="Category" [(ngModel)]="dish.categoryId">
+                        <mat-option *ngFor="let category of categories" [value]="category.id">
+                            {{category.title | translationFilter:user.lang}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </mat-card-subtitle>
             <mat-card-subtitle>
                 <mat-form-field>
                     <input matInput placeholder="Price" [(ngModel)]="dish.price">
@@ -59,34 +66,26 @@
                     <input matInput placeholder="Calories" [(ngModel)]="dish.calories">
                 </mat-form-field>
             </mat-card-subtitle>
-            <mat-card-subtitle>
-                <mat-form-field>
-                    <mat-select placeholder="Category" [(ngModel)]="dish.categoryId">
-                        <mat-option *ngFor="let category of categories" [value]="category.id">
-                            {{category.title | translationFilter:user.lang}}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </mat-card-subtitle>
         </mat-card-header>
     </mat-card>
 
 </mat-dialog-content>
 
 <mat-dialog-actions>
-    <button class="mat-raised-button" (click)="cancel()"
-            [disabled]="isUpdatingDish"
+    <button class="mat-raised-button" (click)="close()"
+            [disabled]="isUpdatingDish || isUploadingImages"
     >Close</button>
     <button class="mat-raised-button mat-primary"
-            [disabled]="isUpdatingDish"
+            [disabled]="isUpdatingDish || isUploadingImages"
             *ngIf="isEditMode"
-            (click)="isEditMode = !isEditMode">Cancel
+            (click)="discardChanges()">Cancel
     </button>
     <button class="mat-raised-button mat-primary"
             *ngIf="!isEditMode && (dish.providerId == user.id)"
             (click)="isEditMode = !isEditMode">Edit
     </button>
     <button class="mat-raised-button mat-primary"
+            [disabled]="isUpdatingDish || isUploadingImages"
             *ngIf="isEditMode"
             (click)="saveUpdate()">Save
     </button>

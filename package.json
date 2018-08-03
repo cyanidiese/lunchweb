@@ -58,6 +58,7 @@
     "snazzy-info-window": "^1.1.0",
     "systemjs": "^0.20.17",
     "ts-helpers": "^1.1.2",
+    "uploadcare-widget": "^3.6.0",
     "zone.js": "^0.8.14"
   },
   "devDependencies": {

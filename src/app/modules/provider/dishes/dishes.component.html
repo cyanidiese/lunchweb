@@ -1,10 +1,10 @@
 <lunch-provider-header></lunch-provider-header>
 
 <mat-button-toggle-group name="isCardView" aria-label="Font Style" [(ngModel)]="isCardView">
-    <mat-button-toggle [value]="false">
+    <mat-button-toggle [value]="true">
         Card View
     </mat-button-toggle>
-    <mat-button-toggle [value]="true">
+    <mat-button-toggle [value]="false">
         List View
     </mat-button-toggle>
 </mat-button-toggle-group>
@@ -33,9 +33,9 @@
 
             <mat-card class="example-card">
 
-                <img *ngIf="isCardView"
-                     mat-card-image [src]="dish.images | firstDishImage:'400x300'"
-                     alt="{{dish.name | translationFilter:user.lang}}">
+                <lunch-images-gallery *ngIf="isCardView"
+                        [images]="dish.images"
+                ></lunch-images-gallery>
 
                 <mat-card-header>
                     <div mat-card-avatar *ngIf="!isCardView"

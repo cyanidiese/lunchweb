@@ -1,0 +1,47 @@
+<ng-container *ngIf="!editMode && images.length && activeImage">
+    <ng-container *ngFor="let image of images">
+        <img
+                [hidden]="image.guid != activeImage.guid"
+                [src]="image | imageSize:'400x300'">
+    </ng-container>
+
+    <ng-container *ngIf="images.length > 1">
+
+        <mat-progress-bar
+                class="example-margin"
+                [color]="'primary'"
+                [mode]="'determinate'"
+                [value]="switchImageProgress">
+        </mat-progress-bar>
+
+    <a (click)="goToThePrevImage()">Prev Image</a>
+    <a (click)="goToTheNextImage()">Next Image</a>
+    </ng-container>
+
+</ng-container>
+
+<ng-container *ngIf="editMode">
+
+    <mat-progress-bar *ngIf="uploadingProgress"
+            class="example-margin"
+            [color]="'primary'"
+            [mode]="'buffer'"
+            [value]="uploadingProgress"
+            [bufferValue]="uploadingBuffer">
+    </mat-progress-bar>
+
+    <ng-container *ngFor="let image of images">
+        <img [src]="image | imageSize:'100x100'">
+        <button mat-mini-fab color="warn" (click)="removeImage(image)"
+                [disabled]="uploadingProgress != 0">
+            <mat-icon aria-label="Upload Image">remove</mat-icon>
+        </button>
+    </ng-container>
+
+
+    <lunch-uploadcare-uploader
+            [disabled]="uploadingProgress != 0"
+            (onComplete)="completeUpload($event)"
+            (onProgress)="progressUpload($event)"
+    ></lunch-uploadcare-uploader>
+</ng-container>

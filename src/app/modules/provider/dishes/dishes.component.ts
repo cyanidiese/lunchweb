@@ -114,6 +114,9 @@ export class DishesComponent implements OnInit {
 
     dishDetailsDialog(dish: Dish){
         const dishDialog = this.modalsService.dishDetailsDialog(this.user, this.categories, dish);
+        dishDialog.componentInstance.updated.subscribe(() => {
+            this.state.getDishesByProvider(this.user.id);
+        });
     }
 
     toggleRemovingDish(dish: Dish){

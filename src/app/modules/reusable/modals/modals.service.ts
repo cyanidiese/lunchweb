@@ -59,6 +59,12 @@ export class ModalsService {
             dish: dish ? dish : new Dish()
         };
 
-        return this.dialog.open(DishModalComponent, dialogConfig);
+        const dialogRef = this.dialog.open(DishModalComponent, dialogConfig);
+
+        dialogRef.componentInstance.error.subscribe(error => {
+            this.confirmationDialog(error["name"] ? error["name"] : "Error", error.message);
+        });
+
+        return dialogRef;
     }
 }

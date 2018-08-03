@@ -20,7 +20,8 @@ import {
     MatButtonToggleModule,
     MatCardModule,
     MatBadgeModule,
-    MatTabsModule
+    MatTabsModule,
+    MatSliderModule
 } from '@angular/material';
 
 import {Md2Module, NoConflictStyleCompatibilityMode} from 'md2';
@@ -38,8 +39,11 @@ import {FirstDishImagePipe} from './pipes/first-dish-image.pipe';
 import {FormatDateStringPipe} from './pipes/format-date-string.pipe';
 import {SortByFieldPipe} from './pipes/sort-by-field.pipe';
 import { DishModalComponent } from './modals/dish-modal/dish-modal.component';
+import { UploadcareUploaderComponent } from './components/uploadcare-uploader/uploadcare-uploader.component';
+import { ImagesGalleryComponent } from './components/images-gallery/images-gallery.component';
+import { ImageSizePipe } from './pipes/image-size.pipe';
 
-import { UcWidgetComponent } from 'ngx-uploadcare-widget';
+// import { UcWidgetComponent } from 'ngx-uploadcare-widget';
 
 
 @NgModule({
@@ -63,11 +67,12 @@ import { UcWidgetComponent } from 'ngx-uploadcare-widget';
         MatCardModule,
         MatBadgeModule,
         MatTabsModule,
+        MatSliderModule,
         MatButtonToggleModule,
         FormsModule,
         ReactiveFormsModule,
         Md2Module,
-        UcWidgetComponent,
+        // UcWidgetComponent,
         NoConflictStyleCompatibilityMode
     ],
     exports: [
@@ -90,15 +95,18 @@ import { UcWidgetComponent } from 'ngx-uploadcare-widget';
         MatCardModule,
         MatBadgeModule,
         MatTabsModule,
+        MatSliderModule,
         FilterByFieldPipe,
         SortByFieldPipe,
         TranslationFilterPipe,
+        UploadcareUploaderComponent,
+        ImagesGalleryComponent,
         FirstDishImagePipe,
         FormatDateStringPipe,
         FormsModule,
         ReactiveFormsModule,
         Md2Module,
-        UcWidgetComponent,
+        // UcWidgetComponent,
         NoConflictStyleCompatibilityMode
     ],
     providers: [
@@ -112,7 +120,10 @@ import { UcWidgetComponent } from 'ngx-uploadcare-widget';
         FirstDishImagePipe,
         FormatDateStringPipe,
         CopyMenuComponent,
-        DishModalComponent
+        DishModalComponent,
+        UploadcareUploaderComponent,
+        ImagesGalleryComponent,
+        ImageSizePipe
     ],
     entryComponents: [
         ConfirmationComponent,

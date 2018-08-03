@@ -9,7 +9,7 @@
                     <h3 mat-subheader>{{category.title | translationFilter:user.lang}}</h3>
                     <mat-list-item *ngFor="let dish of dishes | filterByField:'categoryId':category.id">
                         <h4 mat-line>
-                            <img [src]="dish.images | firstDishImage:'50x50'">
+                            <img [src]="dish.images | firstDishImage:'50x50'" (click)="dishDetailsDialog(dish)">
                             <mat-slide-toggle
                                     class="example-margin"
                                     [checked]="dishesInMenu[dish.id]"
