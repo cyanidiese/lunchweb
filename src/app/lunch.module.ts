@@ -31,6 +31,7 @@ import {NotificationsService} from './services/api/notifications.service';
 import {OfficesService} from './services/api/offices.service';
 import {OrdersService} from './services/api/orders.service';
 import {ProvidersService} from './services/api/providers.service';
+import {UserService} from './services/api/user.service';
 
 import {LoginComponent} from './pages/login/login.component';
 import {LocStorageService} from './services/loc-storage.service';
@@ -103,6 +104,7 @@ export function getAuthServiceConfigs() {
         OfficesService,
         OrdersService,
         ProvidersService,
+        UserService,
         DatePipe,
         DecimalPipe,
         Title,

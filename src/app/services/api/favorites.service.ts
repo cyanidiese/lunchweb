@@ -12,11 +12,15 @@ export class FavoritesService {
         return this.api.get('/master/favorites');
     }
 
-    saveFavorite(favorite: SimpleId) {
-        return this.api.post('/master/favorites/save', [], favorite);
+    toggleFavorite(favorite: SimpleId) {
+        return this.api.post('/master/favorites/toggle', [], favorite);
     }
 
-    deleteFavorite(favorite: SimpleId) {
-        return this.api.delete('/master/favorites/delete', [], favorite);
+    addFavorite(favorite: SimpleId) {
+        return this.api.post('/master/favorites/add', [], favorite);
+    }
+
+    removeFavorite(favorite: SimpleId) {
+        return this.api.delete('/master/favorites/remove', [], favorite);
     }
 }

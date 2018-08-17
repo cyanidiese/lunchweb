@@ -1,4 +1,157 @@
 <lunch-master-header></lunch-master-header>
-<p>
-    menu works!
-</p>
+
+<ng-container *ngIf="provider">
+
+    <h3>{{provider.firstName}} {{provider.lastName}}</h3>
+
+    <div *ngIf="!provider.isShop">
+        <md2-datepicker name="menu-date"
+                        placeholder="Menu Date"
+                        [(ngModel)]="menuDate"
+                        [disabled]="false"
+                        [openOnFocus]="true"
+                        [type]="'date'"
+                        [touchUi]="true"
+                        [startView]="'month'"
+                        #dateControl="ngModel"
+                        [id]="'menu-date'"
+                        (change)="updateMenuDate()"
+        ></md2-datepicker>
+    </div>
+
+    <ng-container *ngIf="!menu">
+        There is no menu for this date
+    </ng-container>
+
+    <ng-container *ngIf="menu">
+
+        <mat-slide-toggle
+                class="example-margin"
+                [checked]="isCardView"
+                (change)="isCardView = !isCardView"
+        >
+            Card View
+        </mat-slide-toggle>
+
+        <mat-slide-toggle
+                class="example-margin"
+                [checked]="onlyFavorites"
+                (change)="changeFavoritesView()"
+        >
+            Only Favorites
+        </mat-slide-toggle>
+
+        <!--<mat-button-toggle-group name="isCardView" aria-label="Font Style" [(ngModel)]="isCardView">-->
+        <!--<mat-button-toggle [value]="true">-->
+        <!--Card View-->
+        <!--</mat-button-toggle>-->
+        <!--<mat-button-toggle [value]="false">-->
+        <!--List View-->
+        <!--</mat-button-toggle>-->
+        <!--</mat-button-toggle-group>-->
+
+        <ng-container *ngIf="dishesCounts['all']">
+
+            <mat-button-toggle-group name="selectedCat"
+                                     aria-label="Font Style" value="all"
+                                     [(ngModel)]="selectedCat">
+
+                <mat-button-toggle value="all">
+                        <span [matBadge]="dishesCounts['all']" matBadgePosition="after"
+                              matBadgeColor="primary">All dishes</span>
+                </mat-button-toggle>
+
+                <ng-container *ngFor="let category of categories">
+                    <mat-button-toggle [value]="category.id" *ngIf="dishesCounts[category.id]">
+                            <span [matBadge]="dishesCounts[category.id]" matBadgePosition="after"
+                                  matBadgeColor="primary">
+                                {{category.title | translationFilter:user.lang}}
+                            </span>
+                    </mat-button-toggle>
+                </ng-container>
+
+            </mat-button-toggle-group>
+
+            <ng-container *ngFor="let item of menu.items">
+                <ng-container
+                        *ngIf="((selectedCat == 'all') || (item.dish.categoryId == selectedCat)) && matchesFavoritesFilter(item.dish)">
+
+                    <mat-card class="example-card">
+
+                        <lunch-images-gallery *ngIf="isCardView"
+                                              [images]="item.dish.images"
+                        ></lunch-images-gallery>
+
+                        <mat-card-header>
+                            <div mat-card-avatar *ngIf="!isCardView"
+                                 [ngStyle]="{'background' : 'url('+(item.dish.images | firstDishImage:'40x40')+')'}"></div>
+                            <mat-card-title>{{item.dish.name | translationFilter:user.lang}}</mat-card-title>
+                            <mat-card-subtitle>
+                                <b>Price: </b>{{ item.dish.price}}
+                                <b>Weight: </b>{{ item.dish.weight}}
+                                <b>Calories: </b>{{item.dish.calories}}
+                                <b>Left: </b>{{item.availableCount}}
+                            </mat-card-subtitle>
+                        </mat-card-header>
+                        <mat-card-content *ngIf="isCardView">
+                            <p>
+                                {{item.dish.description | translationFilter:user.lang}}
+                            </p>
+                        </mat-card-content>
+                        <mat-card-actions>
+                            <button mat-button (click)="dishDetailsDialog(item.dish)">
+                                Details
+                            </button>
+                            <button mat-button (click)="toggleOrderingBlock(item)"
+                                    [disabled]="orderingItemProcess[item.id]">
+                                {{ provider.isShop ? "Buy" : "Order" }}
+                            </button>
+                            <button mat-button
+                                    (click)="toggleFavoritedDish(item.dish)"
+                                    [disabled]="favoriteProcess[item.dish.id]">
+                                <mat-icon>{{ favoriteDishes[item.dish.id] ? "favorite" : "favorite_border"}}</mat-icon>
+                            </button>
+                        </mat-card-actions>
+
+                        <mat-card-actions *ngIf="orderingItemOpened[item.id]">
+                            <mat-progress-bar *ngIf="orderingItemProcess[item.id]"
+                                    class="example-margin"
+                                    [color]="'primary'"
+                                    [mode]="'indeterminate'">
+                            </mat-progress-bar>
+                            <mat-form-field>
+                                <input
+                                        matInput
+                                        type="number"
+                                        min="0"
+                                        [max]="item.availableCount"
+                                        [(ngModel)]="orderingItemCount[item.id]"
+                                />
+                                <mat-hint align="end">Count available</mat-hint>
+                            </mat-form-field>
+                            <button mat-button (click)="processOrdering(item)"
+                                    [disabled]="orderingItemProcess[item.id]">
+                                <mat-icon>check</mat-icon>
+                            </button>
+                        </mat-card-actions>
+                    </mat-card>
+                </ng-container>
+            </ng-container>
+        </ng-container>
+
+        <ng-container *ngIf="!dishesCounts['all']">
+            No dishes found
+        </ng-container>
+
+
+    </ng-container>
+
+    <ng-container *ngIf="!menu">
+        No menu found
+    </ng-container>
+
+</ng-container>
+
+<ng-container *ngIf="!provider">
+    Please, select your provider
+</ng-container>

@@ -1,0 +1,11 @@
+<ng-container *ngIf="user && languages && languages.length">
+    <button mat-button [matMenuTriggerFor]="menu">
+        <mat-icon>flag</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+        <button mat-menu-item
+                *ngFor="let language of languages"
+                (click)="setLanguage(language)"
+        >{{language}}</button>
+    </mat-menu>
+</ng-container>

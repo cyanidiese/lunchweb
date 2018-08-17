@@ -15,6 +15,7 @@ import {GoogleAnalyticsService} from './google-analytics.service';
 import {LocStorageService} from './loc-storage.service';
 
 import {ApiService} from './api.service';
+import {UserService} from './api/user.service';
 import {MasterService} from './api/master.service';
 import {OfficesService} from './api/offices.service';
 import {ProvidersService} from './api/providers.service';
@@ -64,6 +65,7 @@ export class StateService {
                 private googleAnalyticsService: GoogleAnalyticsService,
                 private auth: AuthStateService,
                 private apiService: ApiService,
+                private userApi: UserService,
                 private masterApi: MasterService,
                 private officesApi: OfficesService,
                 private providersApi: ProvidersService,
@@ -103,7 +105,27 @@ export class StateService {
     //==============================================================
 
     getUserProfile() {
-        this.masterApi.getProfile().then((response: User) => {
+        this.userApi.getProfile().then((response: User) => {
+
+            this.updateUserProfile(response);
+
+        }).catch(error => {
+            this.checkErrorType(error);
+        });
+    }
+
+    updateUserLanguage(lang: string) {
+        this.userApi.updateLanguage(lang).then((response: User) => {
+
+            this.updateUserProfile(response);
+
+        }).catch(error => {
+            this.checkErrorType(error);
+        });
+    }
+
+    updateUserProvider(providerId: number) {
+        this.userApi.updateProvider(providerId).then((response: User) => {
 
             this.updateUserProfile(response);
 

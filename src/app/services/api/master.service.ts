@@ -22,6 +22,6 @@ export class MasterService {
     }
 
     updateProfile(data: UpdateProfileRequest) {
-        return this.api.post('/master/update');
+        return this.api.post('/master/update', [], data);
     }
 }

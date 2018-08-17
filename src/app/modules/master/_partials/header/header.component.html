@@ -1,11 +1,12 @@
 <mat-toolbar color="primary" class="main-menu-bar">
     <mat-toolbar-row class="top-menu-bar">
         <span>Master</span>
+        <lunch-language-switcher></lunch-language-switcher>
         <a mat-button routerLink="/master/" class="wide-screen">Menu</a>
         <a mat-button routerLink="/master/orders" class="wide-screen">Orders</a>
         <span class="lunch-spacer"></span>
         <a mat-button routerLink="/master/profile" class="wide-screen">Profile</a>
-        <a mat-button routerLink="/admin" class="wide-screen">Wrong</a>
+        <lunch-provider-switcher></lunch-provider-switcher>
         <mat-icon class="lunch-icon" (click)="logOut()">exit_to_app</mat-icon>
     </mat-toolbar-row>
     <mat-toolbar-row  class="second-menu-bar">

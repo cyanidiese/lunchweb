@@ -1,0 +1,11 @@
+<ng-container *ngIf="user && providers && providers.length">
+  <button mat-button [matMenuTriggerFor]="menu">
+    <mat-icon>restaurant</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item
+            *ngFor="let provider of providers"
+            (click)="setProvider(provider.id)"
+    >{{provider.firstName}} {{provider.lastName}}</button>
+  </mat-menu>
+</ng-container>

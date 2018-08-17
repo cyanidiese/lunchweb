@@ -21,7 +21,8 @@ import {
     MatCardModule,
     MatBadgeModule,
     MatTabsModule,
-    MatSliderModule
+    MatSliderModule,
+    MatMenuModule
 } from '@angular/material';
 
 import {Md2Module, NoConflictStyleCompatibilityMode} from 'md2';
@@ -42,6 +43,8 @@ import { DishModalComponent } from './modals/dish-modal/dish-modal.component';
 import { UploadcareUploaderComponent } from './components/uploadcare-uploader/uploadcare-uploader.component';
 import { ImagesGalleryComponent } from './components/images-gallery/images-gallery.component';
 import { ImageSizePipe } from './pipes/image-size.pipe';
+import { LanguageSwitcherComponent } from './components/language-switcher/language-switcher.component';
+import { ProviderSwitcherComponent } from './components/provider-switcher/provider-switcher.component';
 
 // import { UcWidgetComponent } from 'ngx-uploadcare-widget';
 
@@ -68,6 +71,7 @@ import { ImageSizePipe } from './pipes/image-size.pipe';
         MatBadgeModule,
         MatTabsModule,
         MatSliderModule,
+        MatMenuModule,
         MatButtonToggleModule,
         FormsModule,
         ReactiveFormsModule,
@@ -96,11 +100,14 @@ import { ImageSizePipe } from './pipes/image-size.pipe';
         MatBadgeModule,
         MatTabsModule,
         MatSliderModule,
+        MatMenuModule,
         FilterByFieldPipe,
         SortByFieldPipe,
         TranslationFilterPipe,
         UploadcareUploaderComponent,
         ImagesGalleryComponent,
+        LanguageSwitcherComponent,
+        ProviderSwitcherComponent,
         FirstDishImagePipe,
         FormatDateStringPipe,
         FormsModule,
@@ -123,7 +130,9 @@ import { ImageSizePipe } from './pipes/image-size.pipe';
         DishModalComponent,
         UploadcareUploaderComponent,
         ImagesGalleryComponent,
-        ImageSizePipe
+        LanguageSwitcherComponent,
+        ImageSizePipe,
+        ProviderSwitcherComponent
     ],
     entryComponents: [
         ConfirmationComponent,
