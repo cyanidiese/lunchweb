@@ -25,6 +25,13 @@
 
     <ng-container *ngIf="menu">
 
+        <h3 *ngIf="!provider.isShop">Deadline: {{menu.deadline | formatDateString:'DD.MM.YYYY,  HH:mm'}}
+            ({{menu.deadline | formatDateString:'relative'}})
+        </h3>
+        <h3 *ngIf="!provider.isShop">Delivery: {{menu.date + " " + menu.time | formatDateString:'DD.MM.YYYY,  HH:mm'}}
+            ({{menu.date + " " + menu.time | formatDateString:'relative'}})
+        </h3>
+
         <mat-slide-toggle
                 class="example-margin"
                 [checked]="isCardView"
@@ -40,15 +47,6 @@
         >
             Only Favorites
         </mat-slide-toggle>
-
-        <!--<mat-button-toggle-group name="isCardView" aria-label="Font Style" [(ngModel)]="isCardView">-->
-        <!--<mat-button-toggle [value]="true">-->
-        <!--Card View-->
-        <!--</mat-button-toggle>-->
-        <!--<mat-button-toggle [value]="false">-->
-        <!--List View-->
-        <!--</mat-button-toggle>-->
-        <!--</mat-button-toggle-group>-->
 
         <ng-container *ngIf="dishesCounts['all']">
 
@@ -87,7 +85,7 @@
                                  [ngStyle]="{'background' : 'url('+(item.dish.images | firstDishImage:'40x40')+')'}"></div>
                             <mat-card-title>{{item.dish.name | translationFilter:user.lang}}</mat-card-title>
                             <mat-card-subtitle>
-                                <b>Price: </b>{{ item.dish.price}}
+                                <b>Price: </b>{{ item.price}}
                                 <b>Weight: </b>{{ item.dish.weight}}
                                 <b>Calories: </b>{{item.dish.calories}}
                                 <b>Left: </b>{{item.availableCount}}
@@ -103,7 +101,7 @@
                                 Details
                             </button>
                             <button mat-button (click)="toggleOrderingBlock(item)"
-                                    [disabled]="orderingItemProcess[item.id]">
+                                    [disabled]="orderingItemProcess[item.id] || (!provider.isShop && isAfterDeadline) || (item.availableCount == 0)">
                                 {{ provider.isShop ? "Buy" : "Order" }}
                             </button>
                             <button mat-button
@@ -127,10 +125,10 @@
                                         [max]="item.availableCount"
                                         [(ngModel)]="orderingItemCount[item.id]"
                                 />
-                                <mat-hint align="end">Count available</mat-hint>
+                                <mat-hint align="end">{{item.availableCount}} available</mat-hint>
                             </mat-form-field>
                             <button mat-button (click)="processOrdering(item)"
-                                    [disabled]="orderingItemProcess[item.id]">
+                                    [disabled]="orderingItemProcess[item.id] || (!provider.isShop && isAfterDeadline)">
                                 <mat-icon>check</mat-icon>
                             </button>
                         </mat-card-actions>
@@ -144,10 +142,6 @@
         </ng-container>
 
 
-    </ng-container>
-
-    <ng-container *ngIf="!menu">
-        No menu found
     </ng-container>
 
 </ng-container>

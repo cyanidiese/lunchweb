@@ -1,4 +1,115 @@
 <lunch-master-header></lunch-master-header>
-<p>
-    orders works!
-</p>
+
+<ng-container *ngIf="provider">
+
+    <h3>{{provider.firstName}} {{provider.lastName}}</h3>
+
+    <div *ngIf="!provider.isShop">
+        <md2-datepicker name="menu-date"
+                        placeholder="Menu Date"
+                        [(ngModel)]="menuDate"
+                        [disabled]="false"
+                        [openOnFocus]="true"
+                        [type]="'date'"
+                        [touchUi]="true"
+                        [startView]="'month'"
+                        #dateControl="ngModel"
+                        [id]="'menu-date'"
+                        (change)="updateMenuDate()"
+        ></md2-datepicker>
+    </div>
+
+    <ng-container *ngIf="!menu">
+        There is no orders for this date
+    </ng-container>
+
+    <ng-container *ngIf="menu">
+
+        <h3 *ngIf="!provider.isShop">Deadline: {{menu.deadline | formatDateString:'DD.MM.YYYY, HH:mm'}}
+            ({{menu.deadline | formatDateString:'relative'}})
+        </h3>
+        <h3 *ngIf="!provider.isShop">Delivery: {{menu.date + " " + menu.time | formatDateString:'DD.MM.YYYY, HH:mm'}}
+            ({{menu.date + " " + menu.time | formatDateString:'relative'}})
+        </h3>
+        <h3 *ngIf="!provider.isShop">Ordered Count: {{totalCount}} </h3>
+        <h3 *ngIf="!provider.isShop">Ordered Amount: {{totalPrice}} </h3>
+
+        <ng-container *ngIf="totalCount">
+
+            <ng-container *ngFor="let category of categories">
+                <h2 *ngIf="dishesCounts[category.id]">{{category.title | translationFilter:user.lang}}</h2>
+                <mat-list *ngIf="dishesCounts[category.id]">
+                    <ng-container *ngFor="let order of orders">
+                        <ng-container *ngIf="(order.item.dish.categoryId == category.id)">
+                            <mat-list-item>
+                                <div mat-card-avatar (click)="dishDetailsDialog(order.item.dish)"
+                                     [ngStyle]="{'background' : 'url('+(order.item.dish.images | firstDishImage:'40x40')+')'}"></div>
+
+                                {{order.item.dish.name | translationFilter:user.lang}}
+
+                                <br>
+                                <span>ordered {{order.orderedCount}}x{{order.price}}</span>
+
+                                <ng-container *ngIf="!provider.isShop">
+                                    <ng-container *ngIf="orderingItemOpened[order.itemId]">
+                                        <mat-form-field>
+                                            <input
+                                                    matInput
+                                                    type="number"
+                                                    [min]="0"
+                                                    [max]="order.item.availableCount + order.orderedCount"
+                                                    [(ngModel)]="orderedChangesCount[order.itemId]"
+                                            />
+                                            <mat-hint *ngIf="orderedChangesCount[order.itemId] == order.orderedCount"
+                                                      align="end">
+                                                Do not change order
+                                            </mat-hint>
+                                            <mat-hint *ngIf="orderedChangesCount[order.itemId] > order.orderedCount"
+                                                      align="end">
+                                                Add {{ orderedChangesCount[order.itemId] - order.orderedCount }} more
+                                            </mat-hint>
+                                            <mat-hint *ngIf="orderedChangesCount[order.itemId] < order.orderedCount"
+                                                      align="end">
+                                                Remove {{ order.orderedCount - orderedChangesCount[order.itemId] }}
+                                            </mat-hint>
+                                        </mat-form-field>
+                                        <button mat-button (click)="processOrdering(order.item)"
+                                                [disabled]="orderingItemProcess[order.itemId] || (!provider.isShop && isAfterDeadline)">
+                                            <mat-icon>check</mat-icon>
+                                        </button>
+                                    </ng-container>
+
+                                    <button mat-button (click)="toggleOrderingBlock(order.item)"
+                                            [disabled]="orderingItemProcess[order.itemId] || (!provider.isShop && isAfterDeadline)">
+                                        <mat-icon>{{orderingItemOpened[order.itemId] ? "chevron_right" : "edit"}}</mat-icon>
+                                    </button>
+                                </ng-container>
+                                <ng-container *ngIf="provider.isShop">
+                                    <button mat-button (click)="processRemovingOrder(order)"
+                                            [disabled]="orderingItemProcess[order.itemId] || (!provider.isShop && isAfterDeadline)">
+                                        <mat-icon>close</mat-icon>
+                                    </button>
+                                </ng-container>
+                            </mat-list-item>
+                            <mat-divider></mat-divider>
+
+                        </ng-container>
+                    </ng-container>
+                </mat-list>
+
+            </ng-container>
+        </ng-container>
+
+        <ng-container *ngIf="!totalCount">
+            No dishes found
+        </ng-container>
+
+    </ng-container>
+
+    <pre>{{orders | json}}</pre>
+
+</ng-container>
+
+<ng-container *ngIf="!provider">
+    Please, select your provider
+</ng-container>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {MatSnackBar} from '@angular/material';
 
 import * as moment from 'moment-timezone';
@@ -28,9 +28,9 @@ import {CommentsService} from '../../../services/api/comments.service';
 import {ModalsService} from '../../reusable/modals/modals.service';
 
 @Component({
-  selector: 'lunch-master-menu',
-  templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.scss']
+    selector: 'lunch-master-menu',
+    templateUrl: './menu.component.html',
+    styleUrls: ['./menu.component.scss']
 })
 export class MenuComponent implements OnInit {
 
@@ -46,20 +46,16 @@ export class MenuComponent implements OnInit {
     currentDate: string;
     menuDate: Date = new Date();
 
-    nowDate: Date = new Date();
-
-    currentMenuDate: string = "2018-08-15";
+    currentMenuDate: string = '2018-08-15';
 
     dishesCounts: any = {};
 
-    selectedCat: any = "all";
+    selectedCat: any = 'all';
 
-    isCardView : boolean = false;
-    onlyFavorites : boolean = false;
+    isCardView: boolean = false;
+    onlyFavorites: boolean = false;
 
     isAfterDeadline: boolean = false;
-    dishesInMenu: any = {};
-    dishesMenuStruct: ObjectCounter[] = [];
 
     favorites: number[] = [];
     favoriteDishes: any = {};
@@ -82,8 +78,8 @@ export class MenuComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.state.updatePageRoleType("master");
-        this.state.updatePageType("menu");
+        this.state.updatePageRoleType('master');
+        this.state.updatePageType('menu');
 
         this.state.userUpdated$.subscribe(user => this.updateUser(user));
         this.state.officesUpdated$.subscribe(offices => this.updateOffices(offices));
@@ -108,45 +104,44 @@ export class MenuComponent implements OnInit {
     }
 
 
-    logOut(){
+    logOut() {
         this.state.logOut();
     }
 
-    updateUser(user: User){
+    updateUser(user: User) {
         this.user = user;
         this.detectProvider();
     }
 
-    updateOffices(offices: Office[]){
+    updateOffices(offices: Office[]) {
         this.offices = offices;
     }
 
-    updateCategories(categories: Category[]){
+    updateCategories(categories: Category[]) {
         this.categories = categories;
         this.updateDishesCounts();
     }
 
-    formatDate(date: Date, format: string): string{
+    formatDate(date: Date, format: string): string {
         return moment(date).format(format);
     }
 
-    initDate(){
-        this.nowDate = new Date();
+    initDate() {
         this.menuDate = new Date();
         this.updateMenuDate();
     }
 
-    updateMenuDate(){
-        let currentDate = this.formatDate(this.menuDate, "YYYY-MM-DD");
-        if(currentDate != this.currentMenuDate){
+    updateMenuDate() {
+        let currentDate = this.formatDate(this.menuDate, 'YYYY-MM-DD');
+        if (currentDate != this.currentMenuDate) {
             this.currentMenuDate = currentDate;
             this.loadCurrentProviderMenu();
             this.loadOrders();
         }
     }
 
-    detectProvider(){
-        if(this.user) {
+    detectProvider() {
+        if (this.user) {
             let providers = this.state.getCurrentProviders();
             let provider = providers.filter(prov => prov.id == this.user.providerId).pop();
 
@@ -154,7 +149,7 @@ export class MenuComponent implements OnInit {
 
             this.provider = provider;
 
-            if(needToReloadMenu) {
+            if (needToReloadMenu) {
 
                 this.loadCurrentProviderMenu();
                 this.loadOrders();
@@ -163,18 +158,18 @@ export class MenuComponent implements OnInit {
         }
     }
 
-    loadCurrentProviderMenu(){
+    loadCurrentProviderMenu() {
 
-        if(this.provider) {
+        if (this.provider) {
 
-            this.menusApi.getMenuByDate(this.provider.id, this.currentMenuDate).then((result : Menu) => {
-                console.log("RESULT", result);
+            this.menusApi.getMenuByDate(this.provider.id, this.currentMenuDate).then((result: Menu) => {
+                console.log('RESULT', result);
 
                 this.updateMenu(result);
 
             }).catch((error: RequestError) => {
 
-                console.log("ERROR", error);
+                console.log('ERROR', error);
 
                 this.updateMenu(null);
 
@@ -185,9 +180,9 @@ export class MenuComponent implements OnInit {
         }
     }
 
-    loadFavorites(){
+    loadFavorites() {
 
-        this.favoritesApi.getFavorites().then((result : IdsArray) => {
+        this.favoritesApi.getFavorites().then((result: IdsArray) => {
 
             this.favorites = result.ids;
 
@@ -201,13 +196,13 @@ export class MenuComponent implements OnInit {
         });
     }
 
-    loadOrders(){
+    loadOrders() {
 
-        if(this.provider) {
+        if (this.provider) {
 
             this.ordersApi.getOrdersByDate(this.provider.id, this.currentMenuDate).then((result: Order[]) => {
 
-                console.log("ORDERS", result);
+                console.log('ORDERS', result);
 
                 this.orders = result;
                 //
@@ -215,7 +210,7 @@ export class MenuComponent implements OnInit {
 
             }).catch((error: RequestError) => {
 
-                console.log("ORDERS error", error);
+                console.log('ORDERS error', error);
 
                 this.orders = [];
                 //
@@ -224,13 +219,13 @@ export class MenuComponent implements OnInit {
         }
     }
 
-    detectFavoriteDishes(){
+    detectFavoriteDishes() {
         let favoriteDishes = {};
         let favoriteCount = 0;
 
-        if(this.favorites && this.favorites.length && this.menu && this.menu.items && this.menu.items.length){
+        if (this.favorites && this.favorites.length && this.menu && this.menu.items && this.menu.items.length) {
 
-            for(let i = 0; i < this.menu.items.length; i++){
+            for (let i = 0; i < this.menu.items.length; i++) {
                 let dishId = this.menu.items[i].dish.id;
                 favoriteDishes[dishId] = this.favorites.filter(favoriteId => (favoriteId == dishId)).length;
                 favoriteCount += favoriteDishes[dishId] ? 1 : 0;
@@ -241,63 +236,35 @@ export class MenuComponent implements OnInit {
         this.favoriteCount = favoriteCount;
     }
 
-    updateDishesCounts(){
-        if(this.menu && this.menu.items && this.menu.items.length && this.categories.length) {
+    updateDishesCounts() {
+        if (this.menu && this.menu.items && this.menu.items.length && this.categories.length) {
 
             let dishesCounts = {};
 
-            for(let i = 0; i < this.categories.length; i++){
+            for (let i = 0; i < this.categories.length; i++) {
                 let catId = this.categories[i].id;
                 dishesCounts[catId] = this.menu.items.filter(item => ((item.dish.categoryId == catId) && this.matchesFavoritesFilter(item.dish))).length;
             }
-            dishesCounts["all"] = this.menu.items.filter(item => this.matchesFavoritesFilter(item.dish)).length;
+            dishesCounts['all'] = this.menu.items.filter(item => this.matchesFavoritesFilter(item.dish)).length;
 
             this.dishesCounts = dishesCounts;
         }
-        else{
+        else {
             this.dishesCounts = {};
         }
     }
 
-    updateMenu(menu: Menu){
+    updateMenu(menu: Menu) {
         this.menu = menu;
 
-        if(this.menu){
-            let dishesMenuStruct = [];
-            let dishesInMenu = {};
-
-            for(let i = 0; i < this.menu.items.length; i++){
-                let item = this.menu.items[i];
-                dishesInMenu[item.dishId] = true;
-                dishesMenuStruct.push(new ObjectCounter({
-                    id : item.dishId,
-                    count : item.initialCount
-                }));
-            }
-
-            this.dishesMenuStruct = dishesMenuStruct;
-            this.dishesInMenu = dishesInMenu;
-
-            console.log("deadline");
-
-            let menuDate = (this.menu.date.split("T"))[0];
-            let menuDeadline = (this.menu.deadline.replace("T", " ").replace("Z", ""));
+        if (this.menu) {
+            let menuDeadline = (this.menu.deadline.replace('T', ' ').replace('Z', ''));
 
             this.isAfterDeadline = moment(new Date(menuDeadline)).isBefore(moment());
-            this.nowDate = new Date();
 
-            // this.deadlineChange();
         }
-        else{
-            this.dishesMenuStruct = [];
-            this.dishesInMenu = {};
-
+        else {
             this.isAfterDeadline = moment(this.currentDate).endOf('day').isBefore(moment());
-            this.nowDate = new Date();
-            console.log("===========");
-            console.log(this.isAfterDeadline);
-            console.log(moment().endOf('day').subtract(1, "day"));
-            // this.initDate();
         }
 
         this.updateDishesCounts();
@@ -305,14 +272,14 @@ export class MenuComponent implements OnInit {
     }
 
 
-    dishDetailsDialog(dish: Dish){
+    dishDetailsDialog(dish: Dish) {
         const dishDialog = this.modalsService.dishDetailsDialog(this.user, this.categories, dish);
         dishDialog.componentInstance.updated.subscribe(() => {
             this.state.getDishesByProvider(this.user.id);
         });
     }
 
-    toggleOrderingBlock(item: MenuItem){
+    toggleOrderingBlock(item: MenuItem) {
 
         let isOrderingOpened = !!this.orderingItemOpened[item.id];
 
@@ -321,27 +288,27 @@ export class MenuComponent implements OnInit {
         this.orderingItemOpened[item.id] = !isOrderingOpened;
     }
 
-    processOrdering(item: MenuItem){
+    processOrdering(item: MenuItem) {
 
         this.orderingItemProcess[item.id] = true;
 
         let data = new OrderingRequest({
-            menuItems : [
+            menuItems: [
                 new ObjectCounter({
                     id: item.id,
-                    count : this.orderingItemCount[item.id]
+                    count: this.orderingItemCount[item.id]
                 })
             ]
         });
 
         this.ordersApi.makeOrder(this.provider.id, this.currentMenuDate, data).then((result: Order) => {
-            console.log("RESP", result);
+            console.log('RESP', result);
             this.orderingItemProcess[item.id] = false;
             this.orderingItemOpened[item.id] = false;
             this.loadOrders();
             this.loadCurrentProviderMenu();
         }).catch((error) => {
-            console.log("error", error);
+            console.log('error', error);
             this.orderingItemProcess[item.id] = false;
             this.orderingItemOpened[item.id] = false;
             this.loadOrders();
@@ -349,16 +316,16 @@ export class MenuComponent implements OnInit {
         });
     }
 
-    changeFavoritesView(){
+    changeFavoritesView() {
         this.onlyFavorites = !this.onlyFavorites;
         this.updateDishesCounts();
     }
 
-    matchesFavoritesFilter(dish: Dish){
+    matchesFavoritesFilter(dish: Dish) {
         return !this.onlyFavorites || (this.onlyFavorites && (this.favoriteDishes[dish.id]));
     }
 
-    toggleFavoritedDish(dish: Dish){
+    toggleFavoritedDish(dish: Dish) {
 
         this.favoriteProcess[dish.id] = true;
 
@@ -367,12 +334,12 @@ export class MenuComponent implements OnInit {
         });
 
         this.favoritesApi.toggleFavorite(data).then((result: IdsArray) => {
-            console.log("RESP", result);
+            console.log('RESP', result);
             this.favoriteProcess[dish.id] = false;
             this.favorites = result.ids;
             this.detectFavoriteDishes();
         }).catch((error) => {
-            console.log("error", error);
+            console.log('error', error);
             this.favoriteProcess[dish.id] = false;
             this.loadFavorites();
         });

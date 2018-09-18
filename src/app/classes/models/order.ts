@@ -7,6 +7,8 @@ export class Order {
   userId: number;
   itemId: number;
   orderedCount: number;
+  price: number;
+  date: string;
   item: MenuItem;
   master: User;
 

@@ -12,7 +12,9 @@
 
             <mat-card-title>{{dish.name | translationFilter:user.lang}}</mat-card-title>
             <mat-card-subtitle>
-                <b>Price: </b>{{ dish.price}} <b>Weight: </b>{{ dish.weight}} <b>Calories: </b>{{dish.calories}}
+                <b>Price: </b>{{ dish.price}}
+                <b>Weight: </b>{{ dish.weight}}
+                <b>Calories: </b>{{dish.calories}}
             </mat-card-subtitle>
             <mat-card-subtitle>
                 <b>Category: </b>{{ (categories | filterByField:'id':dish.categoryId:true).title | translationFilter:user.lang}}
@@ -57,18 +59,17 @@
             </mat-card-subtitle>
             <mat-card-subtitle>
                 <mat-form-field>
-                    <input matInput placeholder="Price" [(ngModel)]="dish.price">
+                    <input type="number" matInput placeholder="Price" [(ngModel)]="dish.price">
                 </mat-form-field>
                 <mat-form-field>
-                    <input matInput placeholder="Weight" [(ngModel)]="dish.weight">
+                    <input type="number" matInput placeholder="Weight" [(ngModel)]="dish.weight">
                 </mat-form-field>
                 <mat-form-field>
-                    <input matInput placeholder="Calories" [(ngModel)]="dish.calories">
+                    <input type="number" matInput placeholder="Calories" [(ngModel)]="dish.calories">
                 </mat-form-field>
             </mat-card-subtitle>
         </mat-card-header>
     </mat-card>
-
 </mat-dialog-content>
 
 <mat-dialog-actions>

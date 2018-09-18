@@ -8,6 +8,10 @@ export class TranslationFilterPipe implements PipeTransform {
 
     transform(value: Translation, lang?: string): string {
 
+        if(value == undefined){
+            return "";
+        }
+
         if(typeof value === "string"){
             return value;
         }

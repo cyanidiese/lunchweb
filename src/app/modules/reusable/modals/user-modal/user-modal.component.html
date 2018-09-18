@@ -1,0 +1,72 @@
+<h2 mat-dialog-title>Profile details</h2>
+
+<mat-dialog-content>
+    <mat-card class="example-card" *ngIf="!isEditMode">
+
+        <lunch-images-gallery
+                [images]="[user.image]"
+                [editMode]="isEditMode"
+        ></lunch-images-gallery>
+
+        <mat-card-header>
+
+            <mat-card-title>{{ user.firstName + ' ' + user.lastName }}</mat-card-title>
+            <mat-card-subtitle>
+                <b>Office: </b>{{ (offices | filterByField:'id':user.officeId:true).title |
+                translationFilter:currentUser.lang}}
+            </mat-card-subtitle>
+        </mat-card-header>
+    </mat-card>
+    <mat-card class="example-card" *ngIf="isEditMode">
+
+        <lunch-images-gallery
+                [images]="[user.image]"
+                [editMode]="isEditMode"
+                (imagesChanged)="imageChanged($event)"
+                (imagesUploading)="imagesUploading($event)"
+        ></lunch-images-gallery>
+
+        <mat-card-content>
+            <mat-form-field>
+                <input matInput placeholder="{{'First Name' | translationFilter:currentUser.lang}}"
+                       [(ngModel)]="user.firstName">
+            </mat-form-field>
+            <mat-form-field>
+                <input matInput placeholder="{{'Last Name' | translationFilter:currentUser.lang}}"
+                       [(ngModel)]="user.lastName">
+            </mat-form-field>
+        </mat-card-content>
+        <mat-card-header>
+            <mat-card-subtitle>
+                <mat-form-field>
+                    <mat-select placeholder="Office" [(ngModel)]="user.officeId">
+                        <mat-option *ngFor="let office of offices" [value]="office.id">
+                            {{office.title | translationFilter:currentUser.lang}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </mat-card-subtitle>
+        </mat-card-header>
+    </mat-card>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <button class="mat-raised-button" (click)="close()"
+            [disabled]="isUpdatingUser || isUploadingImages"
+    >Close
+    </button>
+    <button class="mat-raised-button mat-primary"
+            [disabled]="isUpdatingUser || isUploadingImages"
+            *ngIf="isEditMode"
+            (click)="discardChanges()">Cancel
+    </button>
+    <button class="mat-raised-button mat-primary"
+            *ngIf="!isEditMode && ((currentUser.id == user.id) || (currentUser | hasRole:'admin'))"
+            (click)="isEditMode = !isEditMode">Edit
+    </button>
+    <button class="mat-raised-button mat-primary"
+            [disabled]="isUpdatingUser || isUploadingImages"
+            *ngIf="isEditMode"
+            (click)="saveUpdate()">Save
+    </button>
+</mat-dialog-actions>

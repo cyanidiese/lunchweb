@@ -13,7 +13,7 @@
                             <mat-slide-toggle
                                     class="example-margin"
                                     [checked]="dishesInMenu[dish.id]"
-                                    [disabled]="(isAfterDeadline && !user.isShop)"
+                                    [disabled]="(isAfterDeadline && !user.isShop) || dish.isRemoved"
                                     [labelPosition]="'before'"
                                     (change)="toggleDishInMenu(dish.id)">
                                 {{dish.name | translationFilter:user.lang}}
@@ -85,15 +85,17 @@
                 <h4 mat-line>
                     <img [src]="dish.images | firstDishImage:'50x50'">
                     {{dish.name | translationFilter:user.lang}}
+                    (Price: {{(dishPrices[dish.id] != undefined) ? dishPrices[dish.id] : dish.price}})
+                    (Ordered: {{(dishSold[dish.id]) ? dishSold[dish.id] : 0}})
                     <mat-form-field>
                         <input
                                 matInput
                                 type="number"
-                                min="0"
+                                [min]="(dishSold[dish.id]) ? dishSold[dish.id] : 0"
                                 id="myNumber"
                                 [(ngModel)]="dishesMenuItem.count"
                         />
-                        <mat-hint align="end">Count available</mat-hint>
+                        <mat-hint align="end">{{ dishesMenuItem.count - (dishSold[dish.id] ? dishSold[dish.id] : 0)}} left</mat-hint>
                     </mat-form-field>
                 </h4>
             </mat-list-item>

@@ -1,0 +1,125 @@
+<md2-datepicker placeholder="From Date"
+                [(ngModel)]="fromDate"
+                [disabled]="false"
+                [openOnFocus]="true"
+                [type]="'date'"
+                [touchUi]="true"
+                [max]="toDate"
+                [startView]="'month'"
+                [id]="'menu-date-from'"
+                (change)="updateMenuDate()"
+></md2-datepicker>
+<md2-datepicker placeholder="To Date"
+                [(ngModel)]="toDate"
+                [disabled]="false"
+                [openOnFocus]="true"
+                [type]="'date'"
+                [min]="fromDate"
+                [touchUi]="true"
+                [startView]="'month'"
+                [id]="'menu-date-to'"
+                (change)="updateMenuDate()"
+></md2-datepicker>
+
+
+<mat-form-field>
+    <mat-select placeholder="Masters" [formControl]="mastersControl" multiple>
+        <mat-option *ngFor="let master of mastersList" [value]="master.id">
+            {{ master.firstName + ' ' + master.lastName }}
+        </mat-option>
+    </mat-select>
+</mat-form-field>
+
+<mat-form-field>
+    <mat-select placeholder="Offices" [formControl]="officesControl" multiple>
+        <mat-option *ngFor="let office of officesList" [value]="office.id">
+            {{office.title | translationFilter:user.lang}}
+        </mat-option>
+    </mat-select>
+</mat-form-field>
+
+<mat-slide-toggle
+        class="example-margin"
+        [checked]="sortByMaster"
+        (change)="changeSortingMode(sortByMaster)"
+>
+    Group by Master
+</mat-slide-toggle>
+
+<mat-accordion multi="true" *ngIf="sortByMaster">
+    <ng-container *ngFor="let master of mastersList">
+        <mat-expansion-panel *ngIf="(orders | filterOrders:master.id:false:false).length">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <a (click)="masterDetailsDialog(master)">
+                    <img [src]="(master.image | imageSize:'40x40')"/>
+                    </a>
+                    {{master.firstName + ' ' + master.lastName}}
+                </mat-panel-title>
+                <mat-panel-description>
+                    {{master.office.title | translationFilter:user.lang}}
+                </mat-panel-description>
+                <div class="orders-count">{{(orders | filterOrders:master.id:false:false).length}}</div> -
+                <div class="orders-amount">{{(orders | filterOrders:master.id:false:false) | ordersAmount | number:'1.2-2'}}</div>
+            </mat-expansion-panel-header>
+            <ng-container *ngFor="let date of dates">
+                <ng-container *ngIf="(orders | filterOrders:master.id:false:date).length">
+
+                    <b>{{date | formatDateString:"DD.MM.YYYY"}}</b>
+                    <ng-container *ngFor="let dish of dishesList">
+                        <ng-container *ngIf="(orders | filterOrders:master.id:dish.id:date).length">
+                            <ul>
+                                <li *ngFor="let order of (orders | filterOrders:master.id:dish.id:date)">
+                                    <p>{{dish.name | translationFilter:user.lang}}</p>
+                                    <p>{{dish | categoryName:categories | translationFilter:user.lang}}</p>
+                                    <pre>{{order.orderedCount}}x{{order.price}}</pre>
+                                </li>
+                            </ul>
+                        </ng-container>
+                    </ng-container>
+                </ng-container>
+            </ng-container>
+        </mat-expansion-panel>
+    </ng-container>
+</mat-accordion>
+
+<mat-accordion multi="true" *ngIf="!sortByMaster">
+    <ng-container *ngFor="let dish of dishesList">
+        <mat-expansion-panel *ngIf="(orders | filterOrders:false:dish.id:false).length">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <a (click)="dishDetailsDialog(dish)">
+                    <img [src]="(dish.images | firstDishImage:'40x40')"/>
+                    </a>
+                    {{dish.name | translationFilter:user.lang}}
+                </mat-panel-title>
+                <mat-panel-description>
+                    {{dish | categoryName:categories | translationFilter:user.lang}}
+                </mat-panel-description>
+                <div class="orders-count">{{(orders | filterOrders:false:dish.id:false).length}}</div> -
+                <div class="orders-amount">{{(orders | filterOrders:false:dish.id:false) | ordersAmount | number:'1.2-2'}}</div>
+            </mat-expansion-panel-header>
+            <ng-container *ngFor="let date of dates">
+                <ng-container *ngIf="(orders | filterOrders:false:dish.id:date).length">
+
+                    <b>{{date | formatDateString:"DD.MM.YYYY"}}</b>
+                    <ng-container *ngFor="let master of mastersList">
+                        <ng-container *ngIf="(orders | filterOrders:master.id:dish.id:date).length">
+                            <ul>
+                                <li *ngFor="let order of (orders | filterOrders:master.id:dish.id:date)">
+                                    <p>{{master.firstName + ' ' + master.lastName}}</p>
+                                    <p>{{master.office.title | translationFilter:user.lang}}</p>
+                                    <pre>{{order.orderedCount}}x{{order.price}}</pre>
+                                </li>
+                            </ul>
+                        </ng-container>
+                    </ng-container>
+                </ng-container>
+            </ng-container>
+        </mat-expansion-panel>
+    </ng-container>
+</mat-accordion>
+
+
+<pre>dates {{dates | json}}</pre>
+<pre>orders {{orders | json}}</pre>

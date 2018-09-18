@@ -17,4 +17,8 @@ export class OrdersService {
         return this.api.post('/master/orders/' + providerId + '/' + date + '/make', [], data);
     }
 
+    removeOrder(providerId: number, date: string, orderId: number) {
+        return this.api.delete('/master/orders/' + providerId + '/' + date + '/' + orderId + '/remove');
+    }
+
 }

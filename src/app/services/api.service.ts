@@ -89,7 +89,8 @@ export class ApiService {
                 requestData['body'] = body;
             }
 
-            // console.log(requestData);
+            console.log(url);
+            console.log(requestData);
 
             let request = new Request(requestData);
 

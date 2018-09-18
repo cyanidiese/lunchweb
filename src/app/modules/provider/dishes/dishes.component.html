@@ -1,13 +1,12 @@
 <lunch-provider-header></lunch-provider-header>
 
-<mat-button-toggle-group name="isCardView" aria-label="Font Style" [(ngModel)]="isCardView">
-    <mat-button-toggle [value]="true">
-        Card View
-    </mat-button-toggle>
-    <mat-button-toggle [value]="false">
-        List View
-    </mat-button-toggle>
-</mat-button-toggle-group>
+<mat-slide-toggle
+        class="example-margin"
+        [checked]="isCardView"
+        (change)="isCardView = !isCardView"
+>
+    Card View
+</mat-slide-toggle>
 
 <ng-container *ngFor="let dishesType of dishesTypes; let isRemoved = index">
     <ng-container *ngIf="dishesCounts[isRemoved]['all']">

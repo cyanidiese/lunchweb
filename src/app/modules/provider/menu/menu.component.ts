@@ -44,6 +44,8 @@ export class MenuComponent implements OnInit {
 
     isAfterDeadline: boolean = false;
     dishesInMenu: any = {};
+    dishPrices: any = {};
+    dishSold: any = {};
     dishesMenuStruct: ObjectCounter[] = [];
 
     constructor(private state: StateService,
@@ -105,10 +107,14 @@ export class MenuComponent implements OnInit {
         if(this.menu){
             let dishesMenuStruct = [];
             let dishesInMenu = {};
+            let dishPrices = {};
+            let dishSold = {};
 
             for(let i = 0; i < this.menu.items.length; i++){
                 let item = this.menu.items[i];
                 dishesInMenu[item.dishId] = true;
+                dishPrices[item.dishId] = item.price;
+                dishSold[item.dishId] = item.initialCount - item.availableCount;
                 dishesMenuStruct.push(new ObjectCounter({
                     id : item.dishId,
                     count : item.initialCount
@@ -117,6 +123,8 @@ export class MenuComponent implements OnInit {
 
             this.dishesMenuStruct = dishesMenuStruct;
             this.dishesInMenu = dishesInMenu;
+            this.dishPrices = dishPrices;
+            this.dishSold = dishSold;
 
             console.log("deadline");
 
@@ -135,6 +143,9 @@ export class MenuComponent implements OnInit {
         else{
             this.dishesMenuStruct = [];
             this.dishesInMenu = {};
+            this.dishPrices = {};
+            this.dishPrices = {};
+            this.dishSold = {};
 
             this.isAfterDeadline = moment(this.currentDate).endOf('day').isBefore(moment());
             this.nowDate = new Date();

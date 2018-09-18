@@ -15,7 +15,8 @@
     </mat-form-field>
 
     <mat-list *ngIf="menu">
-            <mat-list-item *ngFor="let menuItem of menu.items">
+        <ng-container *ngFor="let menuItem of menu.items">
+            <mat-list-item *ngIf="!menuItem.dish.isRemoved">
                 <h4 mat-line>
                     <img [src]="menuItem.dish.images | firstDishImage:'50x50'">
                     {{menuItem.dish.name | translationFilter:user.lang}}
@@ -32,6 +33,7 @@
                     </mat-form-field>
                 </h4>
             </mat-list-item>
+        </ng-container>
     </mat-list>
     <h3 *ngIf="!menus">You have no menu to copy items from</h3>
 </mat-dialog-content>

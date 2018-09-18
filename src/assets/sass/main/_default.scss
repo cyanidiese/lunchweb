@@ -11,6 +11,11 @@
   box-shadow: 0 3px 5px -1px rgba(0, 0, 0, .2), 0 6px 10px 0 rgba(0, 0, 0, .14), 0 1px 18px 0 rgba(0, 0, 0, .12);
 }
 
+.additional-selection {
+  opacity: 0.75;
+  font-size: 0.75em;
+}
+
 @media (min-width: 721px) {
   .second-menu-bar {
     display: none !important;
