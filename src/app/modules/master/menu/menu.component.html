@@ -109,6 +109,7 @@
                                     [disabled]="favoriteProcess[item.dish.id]">
                                 <mat-icon>{{ favoriteDishes[item.dish.id] ? "favorite" : "favorite_border"}}</mat-icon>
                             </button>
+                            <lunch-comments-button [dishId]="item.dish.id" [itemId]="item.id"></lunch-comments-button>
                         </mat-card-actions>
 
                         <mat-card-actions *ngIf="orderingItemOpened[item.id]">

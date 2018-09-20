@@ -1,0 +1,45 @@
+<h2>Categories</h2>
+
+<ng-container *ngIf="(providerId ? (categories | filterCategories:providerId:true) : categories).length">
+<table mat-table [dataSource]="providerId ? (categories | filterCategories:providerId:true) : categories" class="mat-elevation-z8">
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Name</th>
+        <td mat-cell *matCellDef="let category"> {{category.title | translationFilter:user.lang}}</td>
+    </ng-container>
+
+    <!-- Symbol Column -->
+    <ng-container matColumnDef="addedBy">
+        <th mat-header-cell *matHeaderCellDef> Added by</th>
+        <td mat-cell *matCellDef="let category">
+            <ng-container *ngIf="category.providerId && (providers | filterByField:'id':category.providerId:true) as provider">
+                    <a (click)="masterDetailsDialog(provider)">
+                        <img [src]="(provider.image | imageSize:'40x40')"/>
+                    </a>
+                    {{ provider.firstName }} {{ provider.lastName }}
+            </ng-container>
+            <p *ngIf="!category.providerId">Admin</p>
+        </td>
+    </ng-container>
+
+    <!-- Symbol Column -->
+    <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> Actions</th>
+        <td mat-cell *matCellDef="let category">
+            <a  (click)="showCategoryModal(category)">Edit </a>
+            <a  (click)="showRemoveCategoryModal(category)">Remove </a>
+        </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+</ng-container>
+<ng-container *ngIf="!(providerId ? (categories | filterCategories:providerId:true) : categories).length">
+    <h3>No categories found</h3>
+</ng-container>
+
+<button mat-fab color="primary" (click)="showCategoryModal()">
+    <mat-icon aria-label="Upload Image">add</mat-icon>
+</button>

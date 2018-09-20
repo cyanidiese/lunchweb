@@ -18,7 +18,7 @@
             <mat-button-toggle value="all">
                 <span [matBadge]="dishesCounts[isRemoved]['all']" matBadgePosition="after" matBadgeColor="primary">All dishes</span>
             </mat-button-toggle>
-            <ng-container *ngFor="let category of categories">
+            <ng-container *ngFor="let category of categories | filterCategories:user.id">
                 <mat-button-toggle [value]="category.id" *ngIf="dishesCounts[isRemoved][category.id]">
             <span [matBadge]="dishesCounts[isRemoved][category.id]" matBadgePosition="after" matBadgeColor="primary">
                 {{category.title | translationFilter:user.lang}}
@@ -53,6 +53,7 @@
                     <button mat-button (click)="dishDetailsDialog(dish)">Details</button>
                     <button mat-button (click)="toggleRemovingDish(dish)">{{ dish.isRemoved ? "Restore" : "Remove" }}
                     </button>
+                    <lunch-comments-button [dishId]="dish.id"></lunch-comments-button>
                 </mat-card-actions>
             </mat-card>
         </ng-container>

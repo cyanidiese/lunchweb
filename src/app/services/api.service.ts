@@ -6,6 +6,7 @@ import {AuthStateService} from './auth-state.service';
 // import 'rxjs/add/operator/map'
 // import {Observable} from 'rxjs-compat/observable';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/observable/fromEvent';
 
 import { environment } from '../../environments/environment';
 
@@ -124,7 +125,7 @@ export class ApiService {
         let canonicalQueryString = '';
         for (let i = 0; i < sortedQueryParams.length; i++) {
             let paramValue = queryParams[sortedQueryParams[i]];
-            if((typeof paramValue === "string") && (paramValue.indexOf("'") !== -1) && (path != '/publicorganization')) {
+            if((typeof paramValue === "string") && (paramValue.indexOf("'") !== -1)) {
                 paramValue = paramValue.split("'").join("\\'");
             }
             canonicalQueryString += sortedQueryParams[i] + '=' + encodeURIComponent(paramValue) + '&';

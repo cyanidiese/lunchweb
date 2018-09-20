@@ -3,7 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import {OrdersComponent} from './orders/orders.component';
 import {MenuComponent} from './menu/menu.component';
-import {ProfileComponent} from './profile/profile.component';
+import {StatsComponent} from './stats/stats.component';
 
 
 const routes: Routes = [
@@ -16,8 +16,8 @@ const routes: Routes = [
         component: OrdersComponent
     },
     {
-        path: 'profile',
-        component: ProfileComponent
+        path: 'stats',
+        component: StatsComponent
     }
 ];
 

@@ -4,7 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import {OrdersComponent} from './orders/orders.component';
 import {MenuComponent} from './menu/menu.component';
 import {DishesComponent} from './dishes/dishes.component';
-import {ProfileComponent} from './profile/profile.component';
+import {LookupComponent} from './lookup/lookup.component';
 
 
 const routes: Routes = [
@@ -21,8 +21,8 @@ const routes: Routes = [
         component: DishesComponent
     },
     {
-        path: 'profile',
-        component: ProfileComponent
+        path: 'lookup',
+        component: LookupComponent
     }
 ];
 

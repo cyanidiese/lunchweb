@@ -9,8 +9,6 @@ import {LocalStorageModule} from 'angular-2-local-storage';
 
 
 import {AgmCoreModule} from '@agm/core';
-import {AgmSnazzyInfoWindowModule} from '@agm/snazzy-info-window';
-import {AgmJsMarkerClustererModule} from '@agm/js-marker-clusterer';
 
 import {LunchRoutingModule} from './lunch-routing.module';
 
@@ -80,8 +78,6 @@ export function getAuthServiceConfigs() {
             apiKey: 'AIzaSyAJsBZcOzH5mWubgqRYnefsSIN9aQtAsiI' // old api key
             // apiKey: 'AIzaSyBXpbRQnxPLtJiOgIV_FumSnq-AJMFWLd4' // new api key with places
         }),
-        AgmSnazzyInfoWindowModule,
-        AgmJsMarkerClustererModule,
         ReusableModule,
         SocialLoginModule,
         // UcWidgetModule

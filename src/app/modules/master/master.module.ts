@@ -1,11 +1,11 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {MenuComponent} from './menu/menu.component';
-import {ProfileComponent} from './profile/profile.component';
 import {OrdersComponent} from './orders/orders.component';
 import {MasterRoutingModule} from './master-routing.module';
 import {ReusableModule} from '../reusable/reusable.module';
-import { HeaderComponent } from './_partials/header/header.component';
+import {HeaderComponent} from './_partials/header/header.component';
+import { StatsComponent } from './stats/stats.component';
 
 @NgModule({
     imports: [
@@ -13,7 +13,7 @@ import { HeaderComponent } from './_partials/header/header.component';
         MasterRoutingModule,
         ReusableModule
     ],
-    declarations: [MenuComponent, ProfileComponent, OrdersComponent, HeaderComponent]
+    declarations: [MenuComponent, OrdersComponent, HeaderComponent, StatsComponent]
 })
 export class MasterModule {
 }

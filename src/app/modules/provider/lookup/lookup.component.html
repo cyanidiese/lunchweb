@@ -1,0 +1,5 @@
+<lunch-provider-header></lunch-provider-header>
+
+<ng-container *ngIf="user">
+    <lunch-categories-table [providerId]="user.id"></lunch-categories-table>
+</ng-container>

@@ -22,6 +22,7 @@ import {ModalsService} from '../../modals/modals.service';
 export class OrdersListComponent implements OnInit, OnChanges {
 
     @Input() providerId: number;
+    @Input() isMaster: boolean = false;
 
     orders: Order[] = [];
     categories: Category[] = [];
@@ -37,18 +38,20 @@ export class OrdersListComponent implements OnInit, OnChanges {
     toDate: Date = new Date();
 
     mastersControl = new FormControl();
-    officesControl = new FormControl();
+    dishesControl = new FormControl();
 
     mastersList: User[] = [];
     dishesList: Dish[] = [];
-    officesList: Office[] = [];
 
     mastersIds: number[] = [];
-    officesIds: number[] = [];
     dishesIds: number[] = [];
+    mastersSelectedIds: number[] = [];
+    dishesSelectedIds: number[] = [];
     dates: string[] = [];
 
     sortByMaster: boolean = true;
+
+    showStats: boolean = true;
 
     constructor(private state: StateService,
                 private providerApi: ProvidersService,
@@ -71,6 +74,11 @@ export class OrdersListComponent implements OnInit, OnChanges {
     }
 
     ngOnChanges() {
+
+        if(this.isMaster){
+            this.sortByMaster = false;
+        }
+
         this.loadProviderOrders();
     }
 
@@ -125,8 +133,6 @@ export class OrdersListComponent implements OnInit, OnChanges {
         let mastersList = [];
         let dishesIds = [];
         let dishesList = [];
-        let officesIds = [];
-        let officesList = [];
 
         let dates = [];
 
@@ -147,10 +153,6 @@ export class OrdersListComponent implements OnInit, OnChanges {
                 if(!mastersIds.includes(master.id)){
                     mastersIds.push(master.id);
                     mastersList.push(master);
-                    if(!officesIds.includes(master.office.id)){
-                        officesIds.push(master.office.id);
-                        officesList.push(master.office);
-                    }
                 }
 
                 console.log(date);
@@ -165,8 +167,9 @@ export class OrdersListComponent implements OnInit, OnChanges {
         this.mastersList = mastersList;
         this.dishesIds = dishesIds;
         this.dishesList = dishesList;
-        this.officesIds = officesIds;
-        this.officesList = officesList;
+
+        this.mastersSelectedIds = this.mastersIds.slice(0);
+        this.dishesSelectedIds = this.dishesIds.slice(0);
 
         this.dates = dates.sort(function(a, b) {
             if (a < b) { return 1; }

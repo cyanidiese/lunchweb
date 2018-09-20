@@ -4,7 +4,7 @@
             <button mat-button (click)="sidenavOpened = !sidenavOpened">Close</button>
         </p>
         <mat-list>
-            <ng-container *ngFor="let category of categories">
+            <ng-container *ngFor="let category of categories | filterCategories:user.id">
                 <ng-container *ngIf="(dishes | filterByField:'categoryId':category.id).length">
                     <h3 mat-subheader>{{category.title | translationFilter:user.lang}}</h3>
                     <mat-list-item *ngFor="let dish of dishes | filterByField:'categoryId':category.id">

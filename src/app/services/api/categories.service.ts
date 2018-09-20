@@ -17,8 +17,8 @@ export class CategoriesService {
         return this.api.post('/categories/save', [], data);
     }
 
-    deleteCategory(categoryId: number) {
-        return this.api.delete('/categories/' + categoryId + '/delete');
+    deleteCategory(categoryId: number, assignToId: number) {
+        return this.api.delete('/categories/' + categoryId + '/delete', {assign_id : assignToId});
     }
 
 }

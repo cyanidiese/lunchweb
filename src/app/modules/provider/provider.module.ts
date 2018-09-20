@@ -7,7 +7,7 @@ import {MenuComponent} from './menu/menu.component';
 import {ProviderRoutingModule} from './provider-routing.module';
 import {ReusableModule} from '../reusable/reusable.module';
 import { HeaderComponent } from './_partials/header/header.component';
-import { ProfileComponent } from './profile/profile.component';
+import {LookupComponent} from './lookup/lookup.component';
 
 @NgModule({
     imports: [
@@ -15,7 +15,7 @@ import { ProfileComponent } from './profile/profile.component';
         ProviderRoutingModule,
         ReusableModule
     ],
-    declarations: [OrdersComponent, DishesComponent, MenuComponent, HeaderComponent, ProfileComponent]
+    declarations: [OrdersComponent, DishesComponent, MenuComponent, LookupComponent, HeaderComponent]
 })
 export class ProviderModule {
 }

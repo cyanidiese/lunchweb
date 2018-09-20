@@ -5,11 +5,11 @@ import {StateService} from '../../../services/state.service';
 import {Office} from '../../../classes/models/office';
 
 @Component({
-  selector: 'lunch-master-profile',
-  templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.scss']
+  selector: 'lunch-master-stats',
+  templateUrl: './stats.component.html',
+  styleUrls: ['./stats.component.scss']
 })
-export class ProfileComponent implements OnInit {
+export class StatsComponent implements OnInit {
 
 
     user: User = null;
@@ -22,7 +22,7 @@ export class ProfileComponent implements OnInit {
 
     ngOnInit() {
         this.state.updatePageRoleType("master");
-        this.state.updatePageType("profile");
+        this.state.updatePageType("stats");
 
         this.state.userUpdated$.subscribe(user => this.updateUser(user));
         this.state.officesUpdated$.subscribe(offices => this.updateOffices(offices));

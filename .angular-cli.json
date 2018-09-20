@@ -23,7 +23,6 @@
       "prefix": "lunch",
       "styles": [
         "../node_modules/font-awesome/css/font-awesome.css",
-        "../node_modules/snazzy-info-window/dist/snazzy-info-window.css",
         "./assets/sass/main/_default.scss"
       ],
       "scripts": [

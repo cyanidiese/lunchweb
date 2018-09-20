@@ -1,0 +1,39 @@
+<h2 mat-dialog-title>{{isRemoving ? "Remove Category" : (category.id ? "Edit Category" : "Add Category")}}</h2>
+
+<mat-dialog-content>
+
+    <mat-tab-group *ngIf="!isRemoving">
+        <mat-tab *ngFor="let lang of ['en', 'ua', 'ru']" [label]="lang">
+            <mat-form-field>
+                <input matInput placeholder="{{'Title' | translationFilter:lang}}" [(ngModel)]="category.title[lang]">
+            </mat-form-field>
+        </mat-tab>
+    </mat-tab-group>
+
+    <mat-form-field *ngIf="isRemoving && assignTo">
+        <mat-select placeholder="Category" [(ngModel)]="assignTo">
+            <mat-option *ngFor="let cat of categories | filterCategories:providerId:false:category.id" [value]="cat.id">
+                {{cat.title | translationFilter:user.lang}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <p *ngIf="isRemoving && !assignTo">You cannot remove last category</p>
+
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <button class="mat-raised-button" (click)="close()"
+            [disabled]="isProcessingCategory"
+    >Close
+    </button>
+    <button class="mat-raised-button mat-primary"
+            *ngIf="!isRemoving"
+            [disabled]="isProcessingCategory || !category.title['en']"
+            (click)="saveUpdate()">Save
+    </button>
+    <button class="mat-raised-button mat-primary"
+            *ngIf="isRemoving"
+            [disabled]="isProcessingCategory || !assignTo"
+            (click)="removeCategory()">Remove
+    </button>
+</mat-dialog-actions>

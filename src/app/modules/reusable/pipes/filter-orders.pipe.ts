@@ -9,7 +9,7 @@ import {Order} from '../../../classes/models/order';
 })
 export class FilterOrdersPipe implements PipeTransform {
 
-    transform(orders: Order[], masterId?: number, dishId?: number, date?: string): any {
+    transform(orders: Order[], masterId?: number, dishId?: number, date?: string, mastersSelectedIds?:number[], dishesSelectedIds?:number[]): any {
 
         let result = orders.slice(0);
 
@@ -19,6 +19,14 @@ export class FilterOrdersPipe implements PipeTransform {
 
         if (dishId) {
             result = result.filter(order => order.item.dish.id == dishId);
+        }
+
+        if (mastersSelectedIds) {
+            result = result.filter(order => mastersSelectedIds.includes(order.master.id));
+        }
+
+        if (dishesSelectedIds) {
+            result = result.filter(order => dishesSelectedIds.includes(order.item.dish.id));
         }
 
         if (date) {
